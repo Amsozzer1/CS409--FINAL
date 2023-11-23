@@ -1,11 +1,32 @@
-
 import * as React from 'react';
+import {useState,useEffect} from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Input } from '@mui/material';
 import Navbar from './../Navbar/Navbar.js';
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {app} from './../Firebase/firebase.js';
+// Initialize Firebase Authentication and get a reference to the service
+const auth = getAuth(app);
+
+
 export default function Register(){
 
+    const [email,setEmail] = useState('');
+    const [password,setPassword] = useState('');
+    const [username,setUsername] = useState('');
+    
+  const handleRegister = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      //NAVIGATE ONCE REGISTERED
+
+      console.log('User registered:', userCredential.user);
+    } catch (error) {
+      console.error('Registration failed:', error.message);
+      console.log(email);
+    }
+  };
     return(
 
             <Box
@@ -19,11 +40,18 @@ export default function Register(){
             sx={{backgroundColor:'lightgray',width:'443px',height:'64px',marginLeft:'auto',marginRight:'auto',border:'oldlace',borderColor:'black',borderRadius:'5px'}}
             placeholder="  Username"
             disableUnderline = {true}
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            type="username"
+
             ></Input>
             <Input
             sx={{backgroundColor:'lightgray',width:'443px',height:'64px',marginLeft:'auto',marginRight:'auto',border:'oldlace',borderColor:'black',borderRadius:'5px',marginTop:'37px',}}
             placeholder="  Email"
             disableUnderline = {true}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
             >
 
             </Input>
@@ -31,6 +59,9 @@ export default function Register(){
             sx={{backgroundColor:'lightgray',width:'443px',height:'64px',marginLeft:'auto',marginRight:'auto',marginTop:'37px',border:'oldlace',borderColor:'black',borderRadius:'5px'}}
             placeholder="  Password"
             disableUnderline = {true}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type='password'
             
             >
 
@@ -46,7 +77,11 @@ export default function Register(){
                 background: '#1979BB',
         
         }}
-            
+            onClick={() => {
+                
+                handleRegister();
+                
+            }}
            
             
             >Register</Button>
