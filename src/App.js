@@ -2,6 +2,7 @@ import './App.css';
 import Login from './Login/Login.js';
 import Register from './Register/Register.js';
 import MonthlyCalendar from './Calender/calendar.js';
+import AdvSearch from './AdvanceSearch/advsearch.js';
 import {createBrowserRouter,RouterProvider,} from 'react-router-dom';
 
 function App() {
@@ -20,6 +21,10 @@ function App() {
     {
       path: "/calendar",
       Component: MonthlyCalendar,
+    },
+    {
+      path: "/advsearch",
+      Component: AdvSearch,
     },
   ]);
   

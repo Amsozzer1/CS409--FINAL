@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component,useState } from 'react';
 import { DayPilot, DayPilotMonth } from "@daypilot/daypilot-lite-react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import Navbar from '../Navbar/Navbar';
@@ -7,6 +7,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 class Calendar extends Component {
 
   constructor(props) {
@@ -63,37 +64,31 @@ class Calendar extends Component {
     const updatedEvents = [...events, newEvent];
     this.setState({ events: updatedEvents, isModalOpen: false });
   };
-
+  
+  date = 24;
+  year = 2022;
+  month = 11;
+  FullDate = this.year+'-'+this.month+'-'+this.date;
+  
   render() {
     const { isModalOpen, newEvent } = this.state;
-    const calendarStyle = {
-        height: '600px', // Set the height of the calendar
-        border: '1px solid #ccc', // Add a border
-        borderRadius: '5px', // Add border radius
-        backgroundColor: 'black', // Change the background color
-        color:'pink'
-        // Add any other styles you want to apply to the calendar component
-      };
+    
     return (
       <div>
         <Navbar/>
         
 
 <LocalizationProvider dateAdapter={AdapterDayjs}
-sx={{
-        
-        display: 'inline-flex',
-        backgroundColor: 'black',
-        color:'pink',
-    
-   
-    
 
-}}
 >
     <DemoContainer components={['DatePicker', 'DatePicker']}>
       
-      <Box>
+      <Box
+      sx={{
+       
+        
+      }}
+      >
       <DatePicker
         label={'year month'}
         openTo="month"
@@ -105,6 +100,17 @@ sx={{
             margin: '0px 10px 0px 10px',
             
         }}
+        onChange={(e) => {
+          this.year = e.toJSON().toString().split('T')[0].split('-')[0];
+          this.month = e.toJSON().toString().split('T')[0].split('-')[1];
+          console.log(this.year);
+          console.log(this.month);
+          this.FullDate = this.year+'-'+this.month+'-'+this.date;
+          
+
+          }
+          
+        }
       />
 
       
@@ -112,14 +118,32 @@ sx={{
         label={'day'}
         openTo="day"
         views={['day']}
-        sx={{ 
-              maxWidth: '300px', 
-            
-
+        onChange={(e) => {
+          this.date = e.toJSON().toString().split('T')[0].split('-')[2];
+          console.log(this.date);
+          this.FullDate = this.year+'-'+this.month+'-'+this.date;
         }}
       />
-      
+       <Button
+  variant="contained"
+  component="label"
+  sx={{
+    float:' right',
+    backgroundColor: 'white',
+    color: 'black',
+    
+
+  }}
+  
+>
+  <FileUploadIcon/>
+  <input
+    type="file"
+    hidden
+  />
+</Button>
       </Box>
+      
     </DemoContainer>
   </LocalizationProvider>
         
@@ -139,7 +163,9 @@ sx={{
         <DayPilotMonth
           {...this.state}
           ref={this.calendarRef}
-            style={calendarStyle}
+          startDate={this.FullDate}
+          
+
           
         />
 
