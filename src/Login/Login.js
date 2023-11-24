@@ -12,7 +12,6 @@ import { getAuth} from "firebase/auth";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {GoogleAuthProvider,signInWithRedirect} from "firebase/auth";
 import { FacebookAuthProvider } from "firebase/auth";
-
 const provider2 = new FacebookAuthProvider();
 
 
@@ -93,9 +92,10 @@ export default function Login(){
             <Box
             sx={{justifyContent:'center',width:'100%',height:'85vh',display:'flex',flexDirection:'column'}}
             >
-                <Navbar />
+                
                 <Button sx={{color:'black',marginLeft:'35%',marginTop:'13%',width:'20px'}}>Back</Button>
                 <Button sx={{color:'black',top:'-35px',marginLeft:'25%'}}>Next</Button>
+                
                 
             <h1 style={{textAlign:'center',fontWeight:'normal',fontSize:'48px',marginBottom:'37px'}}>Login</h1>
             
