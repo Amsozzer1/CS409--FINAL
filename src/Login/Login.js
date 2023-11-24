@@ -1,17 +1,17 @@
 
 import * as React from 'react';
-import {useState,useEffect} from 'react';
+import {useState} from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Input, Typography } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
 import { Google,Facebook} from '@mui/icons-material';
-import Navbar from './../Navbar/Navbar.js';
 import {app} from './../Firebase/firebase.js';
 import { getAuth} from "firebase/auth";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {GoogleAuthProvider,signInWithRedirect} from "firebase/auth";
 import { FacebookAuthProvider } from "firebase/auth";
+
 const provider2 = new FacebookAuthProvider();
 
 
@@ -190,6 +190,9 @@ export default function Login(){
             >
               LOGOUT
             </Button>
+            
+              
+
             </Box>
             
             

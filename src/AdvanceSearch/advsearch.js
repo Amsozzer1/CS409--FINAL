@@ -3,7 +3,17 @@ import Box from '@mui/material/Box';
 import { Button } from '@mui/material';
 import {Input} from '@mui/material';
 import {Search} from '@mui/icons-material';
+import Results from '../AdvanceSearch/Results.js';
 import '../index.css';
+
+/* CHANGE DATA TO UPDATE RESULTS (FETCH) */
+const data = [
+   
+    
+  ];
+/* CHANGE DATA TO UPDATE RESULTS (FETCH) */
+
+
 export default function AdvSearch(){
 
     const [open, setOpen] = React.useState(false);
@@ -225,6 +235,8 @@ export default function AdvSearch(){
                 
             </Box>
             }
+            <Results data={data}></Results>
+            
         </Box>
     );
 }

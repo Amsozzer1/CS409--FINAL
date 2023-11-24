@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState,useEffect} from 'react';
+import {useState} from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Input } from '@mui/material';
@@ -33,6 +33,7 @@ export default function Register(){
             sx={{justifyContent:'center',width:'100%',height:'85vh',display:'flex',flexDirection:'column'}}
             >
                 <Navbar />
+               
                 <Button sx={{color:'black',marginLeft:'35%',marginTop:'13%',width:'20px'}}>Back</Button>
                 
             <h1 style={{textAlign:'center',fontWeight:'normal',fontSize:'48px',marginBottom:'37px'}}>Register</h1>
