@@ -8,6 +8,20 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+
+function CalendarComp(
+  startDate
+){
+  return(
+    <DayPilotMonth
+    {...this.state}
+    ref={this.calendarRef}
+    startDate={startDate}
+    events={this.state.events}
+    />
+  )
+
+}
 class Calendar extends Component {
 
   constructor(props) {
@@ -66,13 +80,21 @@ class Calendar extends Component {
   };
   
   date = 24;
-  year = 2022;
+  year = 2023;
   month = 11;
-  FullDate = this.year+'-'+this.month+'-'+this.date;
+  FullDate ='2023-01-12';
   
+  _renderCounter = () => () => {
+    const [count, setCount] = useState(this.FullDate);
+
+    return count;
+  }
+ 
   render() {
     const { isModalOpen, newEvent } = this.state;
+    const CountHook = this._renderCounter();
     
+    console.log(this.FullDate); 
     return (
       <div>
         <Navbar/>
@@ -106,9 +128,7 @@ class Calendar extends Component {
           console.log(this.year);
           console.log(this.month);
           this.FullDate = this.year+'-'+this.month+'-'+this.date;
-          
-
-          }
+        }
           
         }
       />
@@ -120,7 +140,7 @@ class Calendar extends Component {
         views={['day']}
         onChange={(e) => {
           this.date = e.toJSON().toString().split('T')[0].split('-')[2];
-          console.log(this.date);
+          //console.log(this.date);
           this.FullDate = this.year+'-'+this.month+'-'+this.date;
         }}
       />
@@ -159,15 +179,22 @@ class Calendar extends Component {
             margin:'10% 2% 0% 2%',
          }}
          >
-            
-        <DayPilotMonth
-          {...this.state}
-          ref={this.calendarRef}
-          startDate={this.FullDate}
+          {
+            this.FullDate ? <DayPilotMonth
+            {...this.state}
+            ref={this.calendarRef}
+            startDate={this.FullDate}
+            events={this.state.events}
+            /> : <DayPilotMonth
+            {...this.state}
+            ref={this.calendarRef}
+            events={this.state.events}
+            />
+          }
           
 
-          
-        />
+        
+      
 
         <Dialog open={isModalOpen} onClose={this.handleCloseModal}>
           <DialogTitle>Add Task</DialogTitle>
