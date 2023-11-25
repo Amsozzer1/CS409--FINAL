@@ -1,7 +1,6 @@
 import React, { Component,useState } from 'react';
 import { DayPilot, DayPilotMonth } from "@daypilot/daypilot-lite-react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
-import Navbar from '../Navbar/Navbar';
 import Box from '@mui/material/Box';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -97,7 +96,6 @@ class Calendar extends Component {
     console.log(this.FullDate); 
     return (
       <div>
-        <Navbar/>
         
 
 <LocalizationProvider dateAdapter={AdapterDayjs}

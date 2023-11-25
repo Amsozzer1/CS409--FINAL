@@ -3,7 +3,6 @@ import {useState} from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Input } from '@mui/material';
-import Navbar from './../Navbar/Navbar.js';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {app} from './../Firebase/firebase.js';
 // Initialize Firebase Authentication and get a reference to the service
@@ -32,7 +31,6 @@ export default function Register(){
             <Box
             sx={{justifyContent:'center',width:'100%',height:'85vh',display:'flex',flexDirection:'column'}}
             >
-                <Navbar />
                
                 <Button sx={{color:'black',marginLeft:'35%',marginTop:'13%',width:'20px'}}>Back</Button>
                 

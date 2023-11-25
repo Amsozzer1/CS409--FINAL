@@ -63,7 +63,7 @@ export default function Login(){
       };
      function handleGoogleLogin(){
       signInWithRedirect(auth, provider);
-      navigate('/navbar');
+      //navigate('/navbar');
   }
 
   function handleFacebookLogin(){

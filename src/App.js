@@ -5,7 +5,6 @@ import MonthlyCalendar from './Calender/calendar.js';
 import AdvSearch from './AdvanceSearch/advsearch.js';
 import {Bus} from './Bus/bus.js';
 import {Stop} from './Bus/stop.js';
-import Navbar from './Navbar/Navbar.js';
 import {createBrowserRouter,RouterProvider,} from 'react-router-dom';
 
 function App() {
@@ -37,10 +36,7 @@ function App() {
       path: "/stop",
       Component: Stop,
     },
-    {
-      path: "/navbar",
-      Component: Navbar,
-    },
+    
 
   ]);
   
