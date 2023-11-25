@@ -7,13 +7,30 @@ import { Button } from "@mui/material";
 function Avatar({ data }) {
   return (
     
-      data.map((item) => (
+      <Box
+      sx={{
+        display:'table',
+        marginLeft:'-120px',
+        
+      }}>
+        {data.map((item) => (
         <Box key={item.id}>
-          <h1>{item.name}</h1>
-          <h2>{item.email}</h2>
-          <h3>{item.sirName}</h3>
+          <Box
+          sx={{
+            
+            
+          
+          }}>
+          <h3
+          style={{marginTop:-2}}>{item.name}</h3>
+          <p style={{marginTop:-20}}>{item.email}</p>
+          <p style={{marginTop:-18}}>{item.sirName}</p>
+          </Box>
+          <hr></hr>
         </Box>
-      ))
+      ))}
+      
+      </Box>
     
   );
 }

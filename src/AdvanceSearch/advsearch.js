@@ -6,12 +6,29 @@ import {Search} from '@mui/icons-material';
 import Results from '../AdvanceSearch/Results.js';
 import '../index.css';
 
-/* CHANGE DATA TO UPDATE RESULTS (FETCH) */
+/* CHANGE DATA TO UPDATE RESULTS AND ALSO CHANGE AVATAR
+    FROM Results.js*/
 const data = [
+    {
+        id: 1,
+        name: 'Hawaii',
+        email: 'abc@gmail.com',
+        sirName: 'Hawaii',
+
+    },
+    {
+        id: 2,
+        name: 'Hawaii',
+        email: 'abc@gmail.com',
+        sirName: 'Hawaii',
+
+    }
    
     
   ];
-/* CHANGE DATA TO UPDATE RESULTS (FETCH) */
+/* CHANGE DATA TO UPDATE RESULTS (fecth from backend based on
+    the search query?)
+*/
 
 
 export default function AdvSearch(){
@@ -149,11 +166,8 @@ export default function AdvSearch(){
                     ></Input>
                     
                 </Box>
-
-
-
             </Box>
-            :
+            : //else
             <Box
             sx={{
 
@@ -168,8 +182,7 @@ export default function AdvSearch(){
                 sx={{
                     color: 'black',
                 }}
-                >
-                    
+                >                   
                         <input type='checkbox'
                         className='checkbox-round'
                         onClick={()=>{
@@ -181,12 +194,7 @@ export default function AdvSearch(){
                             {
                                 setOpen(false);
                             }
-            
-
-                        }}
-                        
-                        
-                    
+                        }}                    
                     ></input>
                     
                     <p>Advanced Search</p>
@@ -226,9 +234,6 @@ export default function AdvSearch(){
                     verticalAlign: 'middle',
                     marginLeft: '5px',
                     marginTop: '20px',
-
-
-
                     }}/>
                     </Button>
                 </Box>
