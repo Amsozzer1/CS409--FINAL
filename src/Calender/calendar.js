@@ -105,8 +105,7 @@ class Calendar extends Component {
       dtstart: vevent.getFirstPropertyValue('dtstart')
     });
     var next;
-     
-    while ((next = expand.next())) {
+    while ((next = expand.next()) && occurrences.length < 500) {
       const startDate = new DayPilot.Date(next.toString());
       next.addDuration(duration);
       const endDate = new DayPilot.Date(next.toString());
