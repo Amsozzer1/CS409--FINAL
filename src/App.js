@@ -6,6 +6,7 @@ import AdvSearch from './AdvanceSearch/advsearch.js';
 import {Bus} from './Bus/bus.js';
 import {Stop} from './Bus/stop.js';
 import {createBrowserRouter,RouterProvider,} from 'react-router-dom';
+import Map from './Map/Map.js';
 
 function App() {
 
@@ -35,6 +36,10 @@ function App() {
     {
       path: "/stop",
       Component: Stop,
+    },
+    {
+      path: "/map",
+      Component: Map,
     },
     
 
