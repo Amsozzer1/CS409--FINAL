@@ -1,5 +1,5 @@
 import React from 'react';
-import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, MarkerF, InfoWindow  } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
 
 import Navbar from '../Navbar/Navbar';
@@ -14,7 +14,7 @@ const mapContainerStyle = {
 const Map = () => {
   const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
   const [zoom, setZoom] = useState(16);
-
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyCG8MUFrbUkfNNxhg-gcs-DM5Rku9pSsHM',
@@ -35,7 +35,12 @@ const Map = () => {
 
     // console.log(`Clicked on: Lat ${clickedLat}, Lng ${clickedLng}`);
     setCenter({ lat:clickedLat, lng:clickedLng });
+    setSelectedLocation({ lat:clickedLat, lng:clickedLng });
   }
+
+  const handleCloseInfoWindow = () => {
+    setSelectedLocation(null);
+  };
 
   return (
     <div>
@@ -52,7 +57,21 @@ const Map = () => {
             mapTypeControl: false,
           }}
         >
-          <MarkerF position={center} />
+            {selectedLocation && (
+            <InfoWindow
+              position={selectedLocation}
+              onCloseClick={handleCloseInfoWindow}
+            >
+              <div>
+                {/* Your content for the info window goes here */}
+                <h2>Pin</h2>
+                <p>Latitude: {selectedLocation.lat}</p>
+                <p>Longitude: {selectedLocation.lng}</p>
+                <button>Navigate</button>
+              </div>
+            </InfoWindow>
+          )}
+          {/* <MarkerF position={center} /> */}
         </GoogleMap>
         <AdvSearch />
       </div>
