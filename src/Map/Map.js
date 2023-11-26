@@ -3,6 +3,7 @@ import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
 
 import Navbar from '../Navbar/Navbar';
+import AdvSearch from '../AdvanceSearch/advsearch';
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -53,6 +54,7 @@ const Map = () => {
         >
           <MarkerF position={center} />
         </GoogleMap>
+        <AdvSearch />
       </div>
     </div>
   );

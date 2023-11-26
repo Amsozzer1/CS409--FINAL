@@ -52,7 +52,7 @@ export default function AdvSearch(){
                 height: '300px',
                 width: '240px',
                 backgroundColor: '#ABABAB',
-                opacity: '0.7',
+                opacity: '0.9',
             }}
             >
                 <Button
@@ -108,7 +108,7 @@ export default function AdvSearch(){
                         height: '30px',
                         borderRadius: '5px',
                         backgroundColor: 'white',
-                        opacity: '0.7',
+                        opacity: '0.9',
                         color: 'black',
                         marginLeft: '5px',
                         marginTop: '20px',
@@ -124,7 +124,7 @@ export default function AdvSearch(){
                         height: '30px',
                         borderRadius: '5px',
                         backgroundColor: 'white',
-                        opacity: '0.7',
+                        opacity: '0.9',
                         color: 'black',
                         marginLeft: '5px',
                         marginTop: '20px',
@@ -140,7 +140,7 @@ export default function AdvSearch(){
                         height: '30px',
                         borderRadius: '5px',
                         backgroundColor: 'white',
-                        opacity: '0.7',
+                        opacity: '0.9',
                         color: 'black',
                         marginLeft: '5px',
                         marginTop: '20px',
@@ -156,7 +156,7 @@ export default function AdvSearch(){
                         height: '30px',
                         borderRadius: '5px',
                         backgroundColor: 'white',
-                        opacity: '0.7',
+                        opacity: '0.9',
                         color: 'black',
                         marginLeft: '5px',
                         marginTop: '20px',
@@ -174,7 +174,7 @@ export default function AdvSearch(){
                 height: '150px',
                 width: '240px',
                 backgroundColor: '#ABABAB',
-                opacity: '0.7',
+                opacity: '0.9',
                 
             }}
             >
@@ -217,7 +217,7 @@ export default function AdvSearch(){
                         height: '30px',
                         borderRadius: '5px',
                         backgroundColor: 'white',
-                        opacity: '0.7',
+                        opacity: '0.9',
                         color: 'black',
                         marginLeft: '5px',
                         marginTop: '20px',
