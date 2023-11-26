@@ -1,8 +1,8 @@
 import React from 'react';
-import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, MarkerF,DirectionsRenderer } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
-
-import Navbar from '../Navbar/navbar';
+import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
+import Navbar from '../Navbar/Navbar';
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -11,7 +11,17 @@ const mapContainerStyle = {
 };
 
 const Map = () => {
-  const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
+  const [long, setLong] = React.useState(0);
+  const [lat, setLat] = React.useState(0);
+
+      
+  const [center, setCenter] = useState({ lat: 0, lng:0 });
+  navigator.geolocation.getCurrentPosition(function(position) {
+    //console.log(position.coords.longitude);
+    setLong(position.coords.longitude);
+    setLat(position.coords.latitude);
+    setCenter({ lat: lat, lng:long });
+  });
   const [zoom, setZoom] = useState(16);
 
 
@@ -52,8 +62,12 @@ const Map = () => {
           }}
         >
           <MarkerF position={center} />
+          {ROUTE && <DirectionsRenderer directions={ROUTE} />
+      }
         </GoogleMap>
       </div>
+      <AdvSearch />
+      
     </div>
   );
 };
