@@ -2,7 +2,7 @@ import React from 'react';
 import { GoogleMap, useLoadScript, MarkerF } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
 
-import Navbar from '../Navbar/navbar';
+import Navbar from '../Navbar/Navbar';
 
 const libraries = ['places'];
 const mapContainerStyle = {

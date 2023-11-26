@@ -10,45 +10,8 @@ import PlaceIcon from '@mui/icons-material/Place';
 import TodayIcon from '@mui/icons-material/Today';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
-import {app} from './../Firebase/firebase.js';
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { Dropdown } from '@mui/base/Dropdown';
-import { Menu } from '@mui/base/Menu';
-import { MenuButton  } from '@mui/base/MenuButton';
-import { MenuItem  } from '@mui/base/MenuItem';
-import { useNavigate } from 'react-router-dom';
-const auth = getAuth(app);
-const user = auth.currentUser;
+
 export default function Navbar(){
-    
-    const [img,setImg] = React.useState('');
-    const navigate = useNavigate();
-    const createHandleMenuClick = (menuItem) => {
-        return () => {
-          console.log(`Clicked on ${menuItem}`);
-        };
-      };
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/auth.user
-          
-            setImg(user.photoURL);
-          //console.log(user.photoURL);
-          // ...
-        } else {
-          // User is signed out
-          // ...
-        }
-      });
-      function Logout(){
-        auth.signOut().then(() => {
-          // Sign-out successful.
-        }).catch((error) => {
-          // An error happened.
-        });
-        navigate('/');
-      }
     return (
         <AppBar position="static" sx={{bgcolor:"#13294B", height:"80px"}}>
             <Toolbar disableGutters sx={{minHeight:"80px", alignItems: 'center', justifyContent: 'space-between'}}>
@@ -84,55 +47,9 @@ export default function Navbar(){
                     <TodayIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
                 <Button aria-label="account" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
-                    
-                <Dropdown>
-                
-                <MenuButton
-                style={{
-                    backgroundColor: "transparent",
-                    border: "none",
-                    borderRadius: "50%",
-                    cursor: "pointer",
-                }}
-                >
-                    
-                    {
-                        img ?
-                        <img src={img} alt="profile" width="50px" height="50px" style={{borderRadius:"50%",}}/>
-                        : 
-                        (<AccountCircleIcon style={{
-                        width: "50px",
-                        height: "50px",
-                        
-                        }}/>)
-                    } 
-                        
-                </MenuButton>
-                
-
-                <Menu slots={{ listbox: 'ol' }}
-
-                style={{
-                    borderBottom: '1px solid black',
-                    borderLeft: '1px solid black',
-                    borderRight: '1px solid black',
-                    
-                }}
-                >
-                  <MenuItem onClick={createHandleMenuClick('Profile')}>Profile</MenuItem>
-                  <MenuItem onClick={createHandleMenuClick('Language settings')}>
-                    Language settings
-                  </MenuItem>
-                  <MenuItem onClick={Logout}>
-                    Log out
-                  </MenuItem>
-                </Menu>
-                </Dropdown>    
-                    
-
+                    <AccountCircleIcon sx={{fontSize:"inherit"}}/>  
                 </Button>
             </Toolbar>
-            
         </AppBar>
     );
 }
