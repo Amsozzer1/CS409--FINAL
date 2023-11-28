@@ -15,7 +15,7 @@ export default function Navbar(){
     return (
         <AppBar position="static" sx={{bgcolor:"#13294B", height:"80px"}}>
             <Toolbar disableGutters sx={{minHeight:"80px", alignItems: 'center', justifyContent: 'space-between'}}>
-                <IconButton aria-label="Icon" size="large" sx={{ color:"#E84A27", fontSize:"40px" }}> 
+                <IconButton aria-label="Icon" size="largae" sx={{ color:"#E84A27", fontSize:"40px" }}> 
                     <DirectionsBusIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
                 <Typography
