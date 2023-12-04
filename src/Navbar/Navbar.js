@@ -17,30 +17,40 @@ import { Menu } from '@mui/base/Menu';
 import { MenuButton  } from '@mui/base/MenuButton';
 import { MenuItem  } from '@mui/base/MenuItem';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useUser } from '../User/User.js';
+import { set } from 'date-fns';
 const auth = getAuth(app);
 const user = auth.currentUser;
 export default function Navbar(){
-    
+    const { user, handleIdChange } = useUser();
     const [img,setImg] = React.useState('');
     const navigate = useNavigate();
     const createHandleMenuClick = (menuItem) => {
         return () => {
           console.log(`Clicked on ${menuItem}`);
+          console.log(user);
         };
       };
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/auth.user
-          
-            setImg(user.photoURL);
-          //console.log(user.photoURL);
-          // ...
-        } else {
-          // User is signed out
-          // ...
-        }
-      });
+      useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currUser) => {
+            if (currUser) {
+              // User is signed in, see docs for a list of available properties
+              // https://firebase.google.com/docs/reference/js/auth.user
+              handleIdChange(currUser.uid);
+              setImg(currUser.photoURL);
+              // console.log(currUser.photoURL);
+              // ...
+            } else {
+              // User is signed out
+              // ...
+              handleIdChange('');
+              setImg('');
+            }
+          });
+        return unsubscribe;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
       function Logout(){
         auth.signOut().then(() => {
           // Sign-out successful.
