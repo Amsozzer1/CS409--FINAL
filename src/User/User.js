@@ -12,6 +12,8 @@ class User {
     };
     setEvents = (events) => {
         this.events = events;
+    };
+    sortEvents = () => {
         this.events.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
     };
     getId = () => {
@@ -31,8 +33,8 @@ class User {
         this.events.splice(insertIndex, 0, newEvent);
     };
     // getNextEvent = () => {
-        
-        
+
+
     // }
 }
 
@@ -40,19 +42,30 @@ const UserProvider = ({ children }) => {
     const [user, setUser] = useState(new User());
 
     const handleIdChange = (newId) => {
-        const updatedUser = { ...user };
-        updatedUser.setId(newId);
+        const updatedUser = new User();
+        updatedUser.id = newId;
+        updatedUser.setEvents(user.getEvents());
         setUser(updatedUser);
     };
 
     const handleAddEvent = (newEvent) => {
-        const updatedUser = { ...user };
+        const updatedUser = new User();
+        updatedUser.setId(user.getId());
+        updatedUser.setEvents(user.getEvents());
         updatedUser.addEvent(newEvent);
         setUser(updatedUser);
     };
 
+    const handleSetEvents = (events) => {
+        const updatedUser = new User();
+        updatedUser.setId(user.getId());
+        updatedUser.setEvents(events);
+        updatedUser.sortEvents();
+        setUser(updatedUser);
+    };
+
     return (
-        <UserContext.Provider value={{ user, handleIdChange, handleAddEvent }}>
+        <UserContext.Provider value={{ user, handleIdChange, handleAddEvent, handleSetEvents }}>
             {children}
         </UserContext.Provider>
     );
