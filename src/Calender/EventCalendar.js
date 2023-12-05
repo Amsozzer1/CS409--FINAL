@@ -2,87 +2,20 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import moment from 'moment'
 import { useUser } from '../User/User'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import ical from 'ical.js'
 import NavBar from '../Navbar/Navbar'
 import { TextField, Button, styled, Toolbar } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { app } from './../Firebase/firebase.js';
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const auth = getAuth(app);
 // Setup the localizer by providing the moment (or globalize, or Luxon) Object
 // to the correct localizer.
 const localizer = momentLocalizer(moment) // or globalizeLocalizer
 
 const EventCalendar = (props) => {
-    const { user, handleSetEvents, handleIdChange, handleAddEvent } = useUser();
-    const [myEventsList, setMyEventsList] = useState([]);
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currUser) => {
-            if (currUser) {
-                // User is signed in, see docs for a list of available properties
-                // https://firebase.google.com/docs/reference/js/auth.user
-                handleIdChange(auth.currentUser.uid);
-                loadEvents(auth.currentUser.uid);
-                // console.log(currUser.photoURL);
-                // ...
-            } else {
-                // User is signed out
-                // ...
-                handleIdChange('');
-                handleSetEvents([]);
-            }
-        });
-        return unsubscribe;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const { user, handleSetEvents, handleAddEvent } = useUser();
+
     const backendURL = 'http://127.0.0.1:8000';
-    const loadEvents = (userId) => {
-        // Load events from session storage
-        const storedData = sessionStorage.getItem(userId) || '[]';
-        const events = JSON.parse(storedData);
-        // If there are no events in session storage, fetch from backend
-        if (events.length === 0) {
-            fetchEventsFromBackend(userId);
-        } else {
-            const eventsWithDate = events.map((event) => {
-                return {
-                    ...event,
-                    start: new Date(event.start),
-                    end: new Date(event.end)
-                };
-            });
-            handleSetEvents(eventsWithDate);
-            setMyEventsList(eventsWithDate);
-        }
-    };
-    const fetchEventsFromBackend = (userId) => {
-        fetch(`${backendURL}/events/${userId}`, {
-            method: 'GET'
-        })
-            .then(response => {
-                if (!response.ok) {
-                    // User not found in the database
-                    if (response.status === 404) {
-                        console.log('User not found in the database');
-                        return [];
-                    } else {
-                        // Handle other non-success status codes
-                        console.error(`Error fetching events: ${response.status}`);
-                    }
-                }
-                const result = response.json();
-                return result['events'];
-            })
-            .then(data => {
-                handleSetEvents(data);
-            })
-            .catch(error => {
-                // Handle fetch errors or non-success status codes
-                console.error('Fetch error:', error);
-            });
-    };
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
 
@@ -134,8 +67,8 @@ const EventCalendar = (props) => {
             allEvents.push(...occurrences);
         });
 
-        const updatedEvents = [...myEventsList, ...allEvents];
-        setMyEventsList(updatedEvents);
+        const updatedEvents = [...user.getEvents(), ...allEvents];
+        handleSetEvents(updatedEvents);
     };
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -149,14 +82,19 @@ const EventCalendar = (props) => {
         width: 1,
     });
     const handleSelect = ({ start, end }) => {
-        console.log(myEventsList);
+        const newEvent = {
+            start: new Date(start),
+            end: new Date(end),
+            title: 'New event'
+        };
+        handleAddEvent(newEvent);
     };
     return (
         <div>
             <NavBar />
             <div style={{ top: '80px', height: 'calc(100vh - 80px)', width: '100%' }} >
                 <Toolbar sx={{ justifyContent: 'end', boxSizing: 'border-box' }}>
-                    <div>{user.current.getId()}</div>
+                    <div>{user.getId()}</div>
                     <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
                         Upload file
                         <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
@@ -165,7 +103,7 @@ const EventCalendar = (props) => {
                 <div style={{ height: 'calc(100vh - 80px - 64px)', width: '100%' }}>
                     <Calendar
                         localizer={localizer}
-                        events={myEventsList}
+                        events={user.getEvents()}
                         popup
                         selectable
                         onSelectSlot={handleSelect}

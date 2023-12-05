@@ -1,4 +1,4 @@
-import { createContext, useRef, useContext } from 'react';
+import { createContext, useState, useContext } from 'react';
 
 const UserContext = createContext();
 
@@ -39,23 +39,26 @@ class User {
 }
 
 const UserProvider = ({ children }) => {
-    const user = useRef(new User());
-
-    const handleIdChange = (newId) => {
-        user.current.setId(newId);
-    };
+    const [user, setUser] = useState(new User());
 
     const handleAddEvent = (newEvent) => {
-        user.current.addEvent(newEvent);
+        const updatedUser = new User();
+        updatedUser.setId(user.getId());
+        updatedUser.setEvents(user.getEvents());
+        updatedUser.addEvent(newEvent);
+        setUser(updatedUser);
     };
 
-    const handleSetEvents = (events) => {
-        user.current.setEvents(events);
-        user.current.sortEvents();
+    const handleSetEvents = (id, events) => {
+        const updatedUser = new User();
+        updatedUser.setId(id);
+        updatedUser.setEvents(events);
+        updatedUser.sortEvents();
+        setUser(updatedUser);
     };
 
     return (
-        <UserContext.Provider value={{ user, handleIdChange, handleAddEvent, handleSetEvents }}>
+        <UserContext.Provider value={{ user, handleAddEvent, handleSetEvents }}>
             {children}
         </UserContext.Provider>
     );

@@ -22,7 +22,7 @@ import { useUser } from '../User/User.js';
 const auth = getAuth(app);
 const user = auth.currentUser;
 export default function Navbar(){
-    const { user, handleIdChange, handleSetEvents } = useUser();
+    const { user,  handleSetEvents } = useUser();
     const [img,setImg] = React.useState('');
     const navigate = useNavigate();
     const createHandleMenuClick = (menuItem) => {
@@ -36,16 +36,14 @@ export default function Navbar(){
               // User is signed in, see docs for a list of available properties
               // https://firebase.google.com/docs/reference/js/auth.user
               setImg(currUser.photoURL);
-              // handleIdChange(auth.currentUser.uid);
-              // loadEvents(auth.currentUser.uid);
+              loadEvents(currUser.uid);
               // console.log(currUser.photoURL);
               // ...
             } else {
               // User is signed out
               // ...
               setImg('');
-              // handleIdChange('');
-              // handleSetEvents([]);
+              handleSetEvents('', []);
             }
           });
         return unsubscribe;
@@ -67,7 +65,7 @@ export default function Navbar(){
               end: new Date(event.end)
             };
           });
-          handleSetEvents(eventsWithDate);
+          handleSetEvents(userId, eventsWithDate);
         }
       };
       const fetchEventsFromBackend = (userId) => {
@@ -89,7 +87,7 @@ export default function Navbar(){
             return result['events'];
           })
           .then(data => {
-            handleSetEvents(data);
+            handleSetEvents(userId, data);
           })
           .catch(error => {
             // Handle fetch errors or non-success status codes
