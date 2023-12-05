@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useRef, useContext } from 'react';
 
 const UserContext = createContext();
 
@@ -14,7 +14,7 @@ class User {
         this.events = events;
     };
     sortEvents = () => {
-        this.events.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+        this.events.sort((a, b) => a.start.getTime() - b.start.getTime());
     };
     getId = () => {
         return this.id;
@@ -23,9 +23,9 @@ class User {
         return this.events;
     };
     addEvent = (newEvent) => {
-        const startTime = new Date(newEvent.start).getTime();
+        const startTime = newEvent.start.getTime();
         let insertIndex = this.events.findIndex(
-            (event) => new Date(event.start).getTime() > startTime
+            (event) => event.start.getTime() > startTime
         );
         if (insertIndex === -1) {
             insertIndex = this.events.length;
@@ -39,29 +39,19 @@ class User {
 }
 
 const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(new User());
+    const user = useRef(new User());
 
     const handleIdChange = (newId) => {
-        const updatedUser = new User();
-        updatedUser.id = newId;
-        updatedUser.setEvents(user.getEvents());
-        setUser(updatedUser);
+        user.current.setId(newId);
     };
 
     const handleAddEvent = (newEvent) => {
-        const updatedUser = new User();
-        updatedUser.setId(user.getId());
-        updatedUser.setEvents(user.getEvents());
-        updatedUser.addEvent(newEvent);
-        setUser(updatedUser);
+        user.current.addEvent(newEvent);
     };
 
     const handleSetEvents = (events) => {
-        const updatedUser = new User();
-        updatedUser.setId(user.getId());
-        updatedUser.setEvents(events);
-        updatedUser.sortEvents();
-        setUser(updatedUser);
+        user.current.setEvents(events);
+        user.current.sortEvents();
     };
 
     return (

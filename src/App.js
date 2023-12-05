@@ -8,6 +8,7 @@ import { Stop } from './Bus/stop.js';
 import Map from './Map/Map.js';
 import { createBrowserRouter, RouterProvider, } from 'react-router-dom';
 import { UserProvider } from './User/User.js';
+import EventCalendar from './Calender/EventCalendar.js';
 
 function App() {
 
@@ -24,7 +25,7 @@ function App() {
     },
     {
       path: "/calendar",
-      Component: MonthlyCalendar,
+      Component: EventCalendar,
     },
     {
       path: "/advsearch",

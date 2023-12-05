@@ -19,17 +19,15 @@ import { MenuItem  } from '@mui/base/MenuItem';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useUser } from '../User/User.js';
-import { set } from 'date-fns';
 const auth = getAuth(app);
 const user = auth.currentUser;
 export default function Navbar(){
-    const { user, handleIdChange } = useUser();
+    const { user, handleIdChange, handleSetEvents } = useUser();
     const [img,setImg] = React.useState('');
     const navigate = useNavigate();
     const createHandleMenuClick = (menuItem) => {
         return () => {
           console.log(`Clicked on ${menuItem}`);
-          console.log(user);
         };
       };
       useEffect(() => {
@@ -37,20 +35,67 @@ export default function Navbar(){
             if (currUser) {
               // User is signed in, see docs for a list of available properties
               // https://firebase.google.com/docs/reference/js/auth.user
-              handleIdChange(currUser.uid);
               setImg(currUser.photoURL);
+              // handleIdChange(auth.currentUser.uid);
+              // loadEvents(auth.currentUser.uid);
               // console.log(currUser.photoURL);
               // ...
             } else {
               // User is signed out
               // ...
-              handleIdChange('');
               setImg('');
+              // handleIdChange('');
+              // handleSetEvents([]);
             }
           });
         return unsubscribe;
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
+      const backendURL = 'http://127.0.0.1:8000';
+      const loadEvents = (userId) => {
+        // Load events from session storage
+        const storedData = sessionStorage.getItem(userId) || '[]';
+        const events = JSON.parse(storedData);
+        // If there are no events in session storage, fetch from backend
+        if (events.length === 0) {
+          fetchEventsFromBackend(userId);
+        } else {
+          const eventsWithDate = events.map((event) => {
+            return {
+              ...event,
+              start: new Date(event.start),
+              end: new Date(event.end)
+            };
+          });
+          handleSetEvents(eventsWithDate);
+        }
+      };
+      const fetchEventsFromBackend = (userId) => {
+        fetch(`${backendURL}/events/${userId}`, {
+          method: 'GET'
+        })
+          .then(response => {
+            if (!response.ok) {
+              // User not found in the database
+              if (response.status === 404) {
+                console.log('User not found in the database');
+                return [];
+              } else {
+                // Handle other non-success status codes
+                console.error(`Error fetching events: ${response.status}`);
+              }
+            }
+            const result = response.json();
+            return result['events'];
+          })
+          .then(data => {
+            handleSetEvents(data);
+          })
+          .catch(error => {
+            // Handle fetch errors or non-success status codes
+            console.error('Fetch error:', error);
+          });
+      };
       function Logout(){
         auth.signOut().then(() => {
           // Sign-out successful.
@@ -84,7 +129,7 @@ export default function Navbar(){
                 </Typography>
 
                 <Box sx={{flexGrow:1}}/>
-                <IconButton aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
+                <IconButton onClick={() => {console.log(user)}} aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
                     <SearchIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
                 <IconButton aria-label="bus stop" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
