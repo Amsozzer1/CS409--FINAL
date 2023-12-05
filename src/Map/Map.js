@@ -1,8 +1,13 @@
 import React from 'react';
-import { GoogleMap, useLoadScript, MarkerF,DirectionsRenderer } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
 import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
 import Navbar from '../Navbar/Navbar';
+//import { GoogleMap, useLoadScript, MarkerF, InfoWindow  } from '@react-google-maps/api';
+//import { useState, useEffect } from 'react';
+
+//import Navbar from '../Navbar/Navbar';
+//import AdvSearch from '../AdvanceSearch/advsearch';
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -23,7 +28,7 @@ const Map = () => {
     setCenter({ lat: lat, lng:long });
   });
   const [zoom, setZoom] = useState(16);
-
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: 'AIzaSyCG8MUFrbUkfNNxhg-gcs-DM5Rku9pSsHM',
@@ -44,7 +49,12 @@ const Map = () => {
 
     // console.log(`Clicked on: Lat ${clickedLat}, Lng ${clickedLng}`);
     setCenter({ lat:clickedLat, lng:clickedLng });
+    setSelectedLocation({ lat:clickedLat, lng:clickedLng });
   }
+
+  const handleCloseInfoWindow = () => {
+    setSelectedLocation(null);
+  };
 
   return (
     <div>
@@ -64,7 +74,23 @@ const Map = () => {
           <MarkerF position={center} />
           {ROUTE && <DirectionsRenderer directions={ROUTE} />
       }
+            {selectedLocation && (
+            <InfoWindow
+              position={selectedLocation}
+              onCloseClick={handleCloseInfoWindow}
+            >
+              <div>
+                {/* Your content for the info window goes here */}
+                <h2>Pin</h2>
+                <p>Latitude: {selectedLocation.lat}</p>
+                <p>Longitude: {selectedLocation.lng}</p>
+                <button>Navigate</button>
+              </div>
+            </InfoWindow>
+          )}
+          {/* <MarkerF position={center} /> */}
         </GoogleMap>
+        <AdvSearch />
       </div>
       <AdvSearch />
       
