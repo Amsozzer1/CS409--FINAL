@@ -144,7 +144,7 @@ const EventCalendar = (props) => {
                 </Toolbar>
                 <EventImport openInStruction={openInStruction} handleCloseDialog={handleCloseDialog} />
                 <Dialog open={open} onClose={handleCancel} maxWidth='md' fullWidth >
-                    <DialogTitle>Add a New Event</DialogTitle>
+                    <DialogTitle sx={{fontWeight: '900'}}>Add a New Event</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             <strong>Selected Slot:</strong>

@@ -4,13 +4,13 @@ const EventImport = (props) => {
     const { openInStruction, handleCloseDialog } = props;
     return (
         <Dialog open={openInStruction} onClose={handleCloseDialog}>
-            <DialogTitle>Export Calendar Events</DialogTitle>
+            <DialogTitle sx={{fontWeight: '900'}}>Export Calendar Events</DialogTitle>
             <DialogContent>
-                <Typography variant="body1">
-                    To export calendar events as an ICS file from Outlook Web:
+                <Typography variant="subtitle1" sx={{ fontWeight: '600' }} >
+                    To export calendar events as an ICS file from Outlook Calendar:
                 </Typography>
-                <Typography variant="body2">
-                    1. Open Outlook (Web) and click the gear icon at the top right corner.
+                <Typography variant="body1" sx={{ borderBottom: '2px solid #e2e8f0', paddingBottom: '16px' }} >
+                    1. Open Outlook and click the gear icon at the top right corner.
                     <br />
                     2. Select "View All Outlook Settings".
                     <br />
@@ -24,10 +24,10 @@ const EventImport = (props) => {
                     <br />
                     7. Use the ICS link provided to download the calendar locally on your device.
                 </Typography>
-                <Typography variant="body1" style={{ marginTop: '16px' }}>
+                <Typography variant="subtitle1" style={{ marginTop: '16px', fontWeight: '600' }}>
                     To export calendar events as an ICS file from Google Calendar:
                 </Typography>
-                <Typography variant="body2">
+                <Typography variant="body1">
                     1. Open Google Calendar and go to your calendar.
                     <br />
                     2. Click on the settings icon and select "Settings".
