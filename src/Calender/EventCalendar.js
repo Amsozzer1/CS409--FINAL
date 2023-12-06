@@ -5,10 +5,11 @@ import { useUser } from '../User/User'
 import { useState, useRef } from 'react'
 import ical from 'ical.js'
 import NavBar from '../Navbar/Navbar'
-import { useTheme, TextField, Button, styled, Toolbar, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, useMediaQuery } from '@mui/material'
+import { useTheme, TextField, IconButton, Button, styled, Toolbar, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, useMediaQuery } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { backendURL } from '../Backend/Backend.js'
-import { da } from 'date-fns/locale'
+import InfoIcon from '@mui/icons-material/Info';
+import { backendURL } from '../Backend/Backend.js';
+import EventImport from './EventImport.js';
 
 // Setup the localizer by providing the moment (or globalize, or Luxon) Object
 // to the correct localizer.
@@ -20,7 +21,7 @@ const EventCalendar = (props) => {
     let eventStart = useRef(new Date());
     let eventEnd = useRef(new Date());
     const [title, setTitle] = useState('');
-
+    const [openInStruction, setOpenInStruction] = useState(false);
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
 
@@ -73,7 +74,7 @@ const EventCalendar = (props) => {
         });
 
         const updatedEvents = [...user.getEvents(), ...allEvents];
-        const dataToSend = JSON.stringify({events: updatedEvents});
+        const dataToSend = JSON.stringify({ events: updatedEvents });
         fetch(`${backendURL}/events/${user.getId()}`, {
             method: 'POST',
             headers: {
@@ -125,23 +126,29 @@ const EventCalendar = (props) => {
             func();
         }
     };
+    const handleCloseDialog = () => {
+        setOpenInStruction(false);
+    };
     return (
         <div>
             <NavBar />
             <div style={{ top: '80px', height: 'calc(100vh - 80px)', width: '100%' }} >
                 <Toolbar sx={{ justifyContent: 'end', boxSizing: 'border-box' }}>
-                    <div>{user.getId()}</div>
                     <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                        Upload file
+                        Upload file (.ics)
                         <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
                     </Button>
+                    <IconButton variant="contained" sx={{ marginLeft: '10px' }} onClick={() => setOpenInStruction(true)}>
+                        <InfoIcon />
+                    </IconButton>
                 </Toolbar>
+                <EventImport openInStruction={openInStruction} handleCloseDialog={handleCloseDialog} />
                 <Dialog open={open} onClose={handleCancel} maxWidth='md' fullWidth >
                     <DialogTitle>Add a New Event</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             <strong>Selected Slot:</strong>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap'}}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
                                 <span>Start: {eventStart.current.toLocaleString()}</span>
                                 <span>End: {eventEnd.current.toLocaleString()}</span>
                             </div>

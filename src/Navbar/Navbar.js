@@ -23,7 +23,7 @@ import { backendURL } from '../Backend/Backend.js';
 const auth = getAuth(app);
 // const user = auth.currentUser;
 export default function Navbar(){
-    const { user,  handleSetEvents } = useUser();
+    const { handleSetEvents } = useUser();
     const [img,setImg] = React.useState('');
     const navigate = useNavigate();
     const createHandleMenuClick = (menuItem) => {
