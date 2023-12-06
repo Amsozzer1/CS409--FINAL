@@ -17,10 +17,13 @@ import { Menu } from '@mui/base/Menu';
 import { MenuButton  } from '@mui/base/MenuButton';
 import { MenuItem  } from '@mui/base/MenuItem';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useUser } from '../User/User.js';
+import { backendURL } from '../Backend/Backend.js';
 const auth = getAuth(app);
-const user = auth.currentUser;
+// const user = auth.currentUser;
 export default function Navbar(){
-    
+    const { handleSetEvents } = useUser();
     const [img,setImg] = React.useState('');
     const navigate = useNavigate();
     const createHandleMenuClick = (menuItem) => {
@@ -28,19 +31,75 @@ export default function Navbar(){
           console.log(`Clicked on ${menuItem}`);
         };
       };
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/auth.user
-          
-            setImg(user.photoURL);
-          //console.log(user.photoURL);
-          // ...
+      useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currUser) => {
+            if (currUser) {
+              // User is signed in, see docs for a list of available properties
+              // https://firebase.google.com/docs/reference/js/auth.user
+              setImg(currUser.photoURL);
+              loadEvents(currUser.uid);
+              // console.log(currUser.photoURL);
+              // ...
+            } else {
+              // User is signed out
+              // ...
+              setImg('');
+              handleSetEvents('', []);
+            }
+          });
+        return unsubscribe;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
+      const loadEvents = (userId) => {
+        // Load events from session storage
+        const storedData = sessionStorage.getItem(userId) || '[]';
+        const events = JSON.parse(storedData);
+        // If there are no events in session storage, fetch from backend
+        if (events.length === 0) {
+          fetchEventsFromBackend(userId);
         } else {
-          // User is signed out
-          // ...
+          const eventsWithDate = events.map((event) => {
+            return {
+              ...event,
+              start: new Date(event.start),
+              end: new Date(event.end)
+            };
+          });
+          handleSetEvents(userId, eventsWithDate);
         }
-      });
+      };
+      const fetchEventsFromBackend = (userId) => {
+        fetch(`${backendURL}/events/${userId}`, {
+          method: 'GET'
+        })
+          .then(response => {
+            if (!response.ok) {
+              // User not found in the database
+              if (response.status === 404) {
+                console.log('User not found in the database');
+                return [];
+              } else {
+                // Handle other non-success status codes
+                console.error(`Error fetching events: ${response.status}`);
+              }
+            }
+            return response.json();
+          })
+          .then(data => {
+            const events = data.events.map((event) => {
+              return {
+                ...event,
+                start: new Date(event.start),
+                end: new Date(event.end)
+              };
+            });
+            handleSetEvents(userId, events);
+          })
+          .catch(error => {
+            // Handle fetch errors or non-success status codes
+            console.error('Fetch error:', error);
+          });
+      };
       function Logout(){
         auth.signOut().then(() => {
           // Sign-out successful.

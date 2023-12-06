@@ -3,10 +3,12 @@ import Login from './Login/Login.js';
 import Register from './Register/Register.js';
 import MonthlyCalendar from './Calender/calendar.js';
 import AdvSearch from './AdvanceSearch/advsearch.js';
-import {Bus} from './Bus/bus.js';
-import {Stop} from './Bus/stop.js';
+import { Bus } from './Bus/bus.js';
+import { Stop } from './Bus/stop.js';
 import Map from './Map/Map.js';
-import {createBrowserRouter,RouterProvider,} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, } from 'react-router-dom';
+import { UserProvider } from './User/User.js';
+import EventCalendar from './Calender/EventCalendar.js';
 
 
 function App() {
@@ -14,7 +16,7 @@ function App() {
   const router = createBrowserRouter([
     {
       id: "root",
-      
+
       path: "/",
       Component: Login,
     },
@@ -24,7 +26,7 @@ function App() {
     },
     {
       path: "/calendar",
-      Component: MonthlyCalendar,
+      Component: EventCalendar,
     },
     {
       path: "/advsearch",
@@ -45,8 +47,8 @@ function App() {
     
 
   ]);
-  
-  
+
+
 
 
 
@@ -54,8 +56,10 @@ function App() {
 
   return (
     <div className="App">
-    <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
-  </div>
+      <UserProvider>
+        <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+      </UserProvider>
+    </div>
 
   );
 }
