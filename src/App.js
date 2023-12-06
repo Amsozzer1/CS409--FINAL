@@ -10,6 +10,7 @@ import { createBrowserRouter, RouterProvider, } from 'react-router-dom';
 import { UserProvider } from './User/User.js';
 import EventCalendar from './Calender/EventCalendar.js';
 
+
 function App() {
 
   const router = createBrowserRouter([
@@ -17,7 +18,7 @@ function App() {
       id: "root",
 
       path: "/",
-      Component: Map,
+      Component: Login,
     },
     {
       path: "/register",
@@ -40,10 +41,10 @@ function App() {
       Component: Stop,
     },
     {
-      path: "/login",
-      Component: Login,
-    }
-
+      path: "/map",
+      Component: Map,
+    },
+    
 
   ]);
 

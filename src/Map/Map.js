@@ -1,9 +1,13 @@
 import React from 'react';
-import { GoogleMap, useLoadScript, MarkerF, InfoWindow  } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
-
+import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
 import Navbar from '../Navbar/Navbar';
-import AdvSearch from '../AdvanceSearch/advsearch';
+//import { GoogleMap, useLoadScript, MarkerF, InfoWindow  } from '@react-google-maps/api';
+//import { useState, useEffect } from 'react';
+
+//import Navbar from '../Navbar/Navbar';
+//import AdvSearch from '../AdvanceSearch/advsearch';
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -12,7 +16,17 @@ const mapContainerStyle = {
 };
 
 const Map = () => {
-  const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
+  const [long, setLong] = React.useState(0);
+  const [lat, setLat] = React.useState(0);
+
+      
+  const [center, setCenter] = useState({ lat: 0, lng:0 });
+  navigator.geolocation.getCurrentPosition(function(position) {
+    //console.log(position.coords.longitude);
+    setLong(position.coords.longitude);
+    setLat(position.coords.latitude);
+    setCenter({ lat: lat, lng:long });
+  });
   const [zoom, setZoom] = useState(16);
   const [selectedLocation, setSelectedLocation] = useState(null);
 
@@ -57,6 +71,9 @@ const Map = () => {
             mapTypeControl: false,
           }}
         >
+          <MarkerF position={center} />
+          {ROUTE && <DirectionsRenderer directions={ROUTE} />
+      }
             {selectedLocation && (
             <InfoWindow
               position={selectedLocation}
@@ -75,6 +92,8 @@ const Map = () => {
         </GoogleMap>
         <AdvSearch />
       </div>
+      <AdvSearch />
+      
     </div>
   );
 };
