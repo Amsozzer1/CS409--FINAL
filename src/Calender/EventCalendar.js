@@ -2,11 +2,13 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import moment from 'moment'
 import { useUser } from '../User/User'
-import { useEffect, useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import ical from 'ical.js'
 import NavBar from '../Navbar/Navbar'
-import { TextField, Button, styled, Toolbar } from '@mui/material'
+import { useTheme, TextField, Button, styled, Toolbar, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, useMediaQuery } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { backendURL } from '../Backend/Backend.js'
+import { da } from 'date-fns/locale'
 
 // Setup the localizer by providing the moment (or globalize, or Luxon) Object
 // to the correct localizer.
@@ -14,8 +16,11 @@ const localizer = momentLocalizer(moment) // or globalizeLocalizer
 
 const EventCalendar = (props) => {
     const { user, handleSetEvents, handleAddEvent } = useUser();
+    const [open, setOpen] = useState(false);
+    let eventStart = useRef(new Date());
+    let eventEnd = useRef(new Date());
+    const [title, setTitle] = useState('');
 
-    const backendURL = 'http://127.0.0.1:8000';
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
 
@@ -68,7 +73,20 @@ const EventCalendar = (props) => {
         });
 
         const updatedEvents = [...user.getEvents(), ...allEvents];
-        handleSetEvents(updatedEvents);
+        const dataToSend = JSON.stringify({events: updatedEvents});
+        fetch(`${backendURL}/events/${user.getId()}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: dataToSend
+        }).then(response => {
+            console.log(response);
+        }).catch(error => {
+            console.error('Fetch error:', error);
+        });
+        sessionStorage.setItem(user.getId(), JSON.stringify(updatedEvents));
+        handleSetEvents(user.getId(), updatedEvents);
     };
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
@@ -81,13 +99,31 @@ const EventCalendar = (props) => {
         whiteSpace: 'nowrap',
         width: 1,
     });
+    const theme = useTheme();
+    const fullWidth = useMediaQuery(theme.breakpoints.down('md'));
     const handleSelect = ({ start, end }) => {
+        setOpen(true);
+        eventStart.current = start;
+        eventEnd.current = end;
+    };
+    const handleSave = () => {
         const newEvent = {
-            start: new Date(start),
-            end: new Date(end),
-            title: 'New event'
+            start: eventStart.current,
+            end: eventEnd.current,
+            title: title
         };
         handleAddEvent(newEvent);
+        setOpen(false);
+        setTitle('');
+    };
+    const handleCancel = () => {
+        setOpen(false);
+        setTitle('');
+    };
+    const handleEnter = (e, func) => {
+        if (e.key === 'Enter') {
+            func();
+        }
     };
     return (
         <div>
@@ -100,12 +136,40 @@ const EventCalendar = (props) => {
                         <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
                     </Button>
                 </Toolbar>
+                <Dialog open={open} onClose={handleCancel} maxWidth='md' fullWidth >
+                    <DialogTitle>Add a New Event</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            <strong>Selected Slot:</strong>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap'}}>
+                                <span>Start: {eventStart.current.toLocaleString()}</span>
+                                <span>End: {eventEnd.current.toLocaleString()}</span>
+                            </div>
+                        </DialogContentText>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            label="Event Title"
+                            id='event-title'
+                            type="text"
+                            fullWidth
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            onKeyDown={(e) => handleEnter(e, handleSave)}
+                        />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCancel}>Cancel</Button>
+                        <Button onClick={handleSave}>Save</Button>
+                    </DialogActions>
+                </Dialog>
                 <div style={{ height: 'calc(100vh - 80px - 64px)', width: '100%' }}>
                     <Calendar
                         localizer={localizer}
                         events={user.getEvents()}
                         popup
                         selectable
+                        defaultView={fullWidth ? 'week' : 'month'}
                         onSelectSlot={handleSelect}
                         startAccessor="start"
                         endAccessor="end"

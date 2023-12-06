@@ -1,4 +1,5 @@
 import { createContext, useState, useContext } from 'react';
+import { backendURL } from '../Backend/Backend.js';
 
 const UserContext = createContext();
 
@@ -46,6 +47,18 @@ const UserProvider = ({ children }) => {
         updatedUser.setId(user.getId());
         updatedUser.setEvents(user.getEvents());
         updatedUser.addEvent(newEvent);
+        sessionStorage.setItem(user.getId(), JSON.stringify(updatedUser.getEvents()));
+        fetch(`${backendURL}/events/${user.getId()}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({events: [newEvent]})
+        }).then(response => {
+            console.log(response);
+        }).catch(error => {
+            console.error('Fetch error:', error);
+        });
         setUser(updatedUser);
     };
 

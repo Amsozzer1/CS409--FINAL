@@ -19,8 +19,9 @@ import { MenuItem  } from '@mui/base/MenuItem';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useUser } from '../User/User.js';
+import { backendURL } from '../Backend/Backend.js';
 const auth = getAuth(app);
-const user = auth.currentUser;
+// const user = auth.currentUser;
 export default function Navbar(){
     const { user,  handleSetEvents } = useUser();
     const [img,setImg] = React.useState('');
@@ -49,7 +50,6 @@ export default function Navbar(){
         return unsubscribe;
       // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
-      const backendURL = 'http://127.0.0.1:8000';
       const loadEvents = (userId) => {
         // Load events from session storage
         const storedData = sessionStorage.getItem(userId) || '[]';
@@ -83,11 +83,17 @@ export default function Navbar(){
                 console.error(`Error fetching events: ${response.status}`);
               }
             }
-            const result = response.json();
-            return result['events'];
+            return response.json();
           })
           .then(data => {
-            handleSetEvents(userId, data);
+            const events = data.events.map((event) => {
+              return {
+                ...event,
+                start: new Date(event.start),
+                end: new Date(event.end)
+              };
+            });
+            handleSetEvents(userId, events);
           })
           .catch(error => {
             // Handle fetch errors or non-success status codes
@@ -127,7 +133,7 @@ export default function Navbar(){
                 </Typography>
 
                 <Box sx={{flexGrow:1}}/>
-                <IconButton onClick={() => {console.log(user)}} aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
+                <IconButton aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
                     <SearchIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
                 <IconButton aria-label="bus stop" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
