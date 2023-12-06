@@ -1,7 +1,8 @@
 import React from 'react';
 import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
 import { useState, useEffect } from 'react';
-import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
+
+import {Stop} from '../Bus/stop';
 import Navbar from '../Navbar/Navbar';
 //import { GoogleMap, useLoadScript, MarkerF, InfoWindow  } from '@react-google-maps/api';
 //import { useState, useEffect } from 'react';
@@ -14,27 +15,29 @@ const mapContainerStyle = {
   width: '100%',
   height: '100%',
 };
-
-const Map = () => {
+function NavMarker({position}){
+    return (
+     <Marker position={position} />
+    );
+  
+  }
+const BusStop = () => {
   const [long, setLong] = React.useState(0);
   const [lat, setLat] = React.useState(0);
-  
-  const [navigate, setNavigate] = React.useState(false);
-
-      
+  const [zoom, setZoom] = useState(16);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [navigation, setNavigation] = React.useState(false);
   const [center, setCenter] = useState({ lat: 0, lng:0 });
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: 'AIzaSyCG8MUFrbUkfNNxhg-gcs-DM5Rku9pSsHM',
+    libraries,
+  });
+
   navigator.geolocation.getCurrentPosition(function(position) {
     //console.log(position.coords.longitude);
     setLong(position.coords.longitude);
     setLat(position.coords.latitude);
     setCenter({ lat: lat, lng:long });
-  });
-  const [zoom, setZoom] = useState(16);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyCG8MUFrbUkfNNxhg-gcs-DM5Rku9pSsHM',
-    libraries,
   });
 
   if (loadError) {
@@ -68,6 +71,7 @@ const Map = () => {
           zoom={zoom}
           center={center}
           onClick={handleOnClick}
+        //   onScroll={()=>{setZoom(16)}}
           options={{
             fullscreenControl: false,
             streetViewControl: false,
@@ -75,8 +79,7 @@ const Map = () => {
           }}
         >
           <MarkerF position={center} />
-          {ROUTE && <DirectionsRenderer directions={ROUTE} />
-      }
+          
             {selectedLocation && (
             <InfoWindow
               position={selectedLocation}
@@ -88,35 +91,41 @@ const Map = () => {
                 <p>Latitude: {selectedLocation.lat}</p>
                 <p>Longitude: {selectedLocation.lng}</p>
                 <button
-                style={{zIndex:10}}
-                onClick={() => {
-
-                  setNavigate(true);
-                  
-                  
-                  
+                onClick={()=>{
+                    setNavigation(true);
+                    
                 }}
                 
                 
+                
                 >Navigate</button>
-                      {
-                        navigate && (
-                          <Marker position={{ lat: selectedLocation.lat, lng:selectedLocation.lng }} />
-                        )
-                      }
-                    
+                      
+                  
+            
 
               </div>
             </InfoWindow>
           )}
           {/* <MarkerF position={center} /> */}
+          {navigation ?
+                <>
+                <Marker position={selectedLocation}
+                icon={{
+                    url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                    
+                }}
+                ></Marker>
+                <Stop DATA={{lat:selectedLocation.lat,long:selectedLocation.lng}}/>
+                </>:<Stop DATA={{lat:lat,long:long}}/>
+            }
         </GoogleMap>
-        <AdvSearch />
+        
       </div>
-      <AdvSearch />
+      
+     
       
     </div>
   );
 };
 
-export default Map;
+export default BusStop;
