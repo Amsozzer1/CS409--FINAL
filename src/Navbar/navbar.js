@@ -16,13 +16,21 @@ import { Dropdown } from '@mui/base/Dropdown';
 import { Menu } from '@mui/base/Menu';
 import { MenuButton  } from '@mui/base/MenuButton';
 import { MenuItem  } from '@mui/base/MenuItem';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 const auth = getAuth(app);
 const user = auth.currentUser;
+
 export default function Navbar(){
-    
+  const dropdownMenuProps={
+    menuStyle:{
+      border: "1px solid black",
+      borderRadius: "5%",
+      backgroundColor: 'lightgrey',
+    },
+  }
     const [img,setImg] = React.useState('');
     const navigate = useNavigate();
+    const location = useLocation();
     const createHandleMenuClick = (menuItem) => {
         return () => {
           console.log(`Clicked on ${menuItem}`);
@@ -40,7 +48,7 @@ export default function Navbar(){
           // User is signed out
           // ...
         }
-      });
+      },[img]);
       function Logout(){
         auth.signOut().then(() => {
           // Sign-out successful.
@@ -74,16 +82,27 @@ export default function Navbar(){
                 </Typography>
 
                 <Box sx={{flexGrow:1}}/>
-                <IconButton aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
+                <IconButton aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
+                onClick={() => {
+                  if(location.pathname !== '/map')
+                  {navigate('/map')}
+                }}
+                > 
                     <SearchIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
-                <IconButton aria-label="bus stop" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
+                <IconButton aria-label="bus stop" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
+                onClick={()=>{if(location.pathname!=='/busses'){navigate('/busses')}}}
+                > 
                     <PlaceIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
-                <IconButton aria-label="calendar" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
+                <IconButton aria-label="calendar" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
+                 onClick={()=>{if(location.pathname!=='/calendar')
+                 {
+                  navigate('/calendar');
+                 }
+                 }}> 
                     <TodayIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
-                <Button aria-label="account" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
                     
                 <Dropdown>
                 
@@ -110,12 +129,18 @@ export default function Navbar(){
                 </MenuButton>
                 
 
-                <Menu slots={{ listbox: 'ol' }}
+                <Menu 
 
                 style={{
+                  overflow:'hidden',
+                  // zIndex: -1,
+                  height:'fit-content',
                     borderBottom: '1px solid black',
                     borderLeft: '1px solid black',
                     borderRight: '1px solid black',
+                    backgroundColor: 'white',
+
+                    
                     
                 }}
                 >
@@ -130,7 +155,7 @@ export default function Navbar(){
                 </Dropdown>    
                     
 
-                </Button>
+
             </Toolbar>
             
         </AppBar>

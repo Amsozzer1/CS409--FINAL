@@ -8,6 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import ical from 'ical.js';
+import Navbar from '../Navbar/Navbar';
 
 function CalendarComp(
   startDate
@@ -149,11 +150,15 @@ class Calendar extends Component {
     const { isModalOpen, newEvent } = this.state;
     const CountHook = this._renderCounter();
 
-    console.log(this.FullDate);
+    
     return (
-      <div>
+      <div
+      
+      style={{
+        height:'100vh',
+      }}>
 
-
+        <Navbar />
         <LocalizationProvider dateAdapter={AdapterDayjs}
 
         >
@@ -162,7 +167,7 @@ class Calendar extends Component {
             <Box
               sx={{
 
-
+                
               }}
             >
               <DatePicker
@@ -179,8 +184,7 @@ class Calendar extends Component {
                 onChange={(e) => {
                   this.year = e.toJSON().toString().split('T')[0].split('-')[0];
                   this.month = e.toJSON().toString().split('T')[0].split('-')[1];
-                  console.log(this.year);
-                  console.log(this.month);
+               
                   this.FullDate = this.year + '-' + this.month + '-' + this.date;
                 }
 
@@ -202,7 +206,7 @@ class Calendar extends Component {
                 variant="contained"
                 component="label"
                 sx={{
-                  float: ' right',
+                  // float: ' right',
                   backgroundColor: 'white',
                   color: 'black',
 
@@ -228,11 +232,12 @@ class Calendar extends Component {
 
           sx={{
 
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            position: 'relative',
+            // zIndex: -2,
 
-            margin: '10% 2% 0% 2%',
+            margin: '2% 2% 0px 2%',
+            
+            
           }}
         >
           {
@@ -245,6 +250,7 @@ class Calendar extends Component {
               {...this.state}
               ref={this.calendarRef}
               events={this.state.events}
+              startDate={DayPilot.Date.today()}
             />
           }
 

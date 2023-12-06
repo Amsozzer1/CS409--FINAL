@@ -8,7 +8,7 @@ import { Google,Facebook} from '@mui/icons-material';
 import {app} from './../Firebase/firebase.js';
 import { getAuth} from "firebase/auth";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import {GoogleAuthProvider,signInWithRedirect} from "firebase/auth";
+import {GoogleAuthProvider,signInWithRedirect,signInWithPopup} from "firebase/auth";
 import { FacebookAuthProvider } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 const provider2 = new FacebookAuthProvider();
@@ -39,6 +39,7 @@ export default function Login(){
           console.log("  Name: " + profile.displayName);
           console.log("  Email: " + profile.email);
           console.log("  Photo URL: " + profile.photoURL);
+          
         });
       }
       else{
@@ -53,6 +54,7 @@ export default function Login(){
             // Signed in 
             const user = userCredential.user;
             console.log('User logged in:', user);
+            navigate('/map');
             // ...
           })
           .catch((error) => {
@@ -62,11 +64,20 @@ export default function Login(){
       };
      function handleGoogleLogin(){
       signInWithRedirect(auth, provider);
-      //navigate('/navbar');
+      navigate('/map');
   }
 
   function handleFacebookLogin(){
-    signInWithRedirect(auth, provider2);
+    signInWithPopup(auth, provider2).then((userCredential) => {
+      // Signed in 
+      const user = userCredential.user;
+      console.log('User logged in:', user);
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+    });
   }
 
     return(

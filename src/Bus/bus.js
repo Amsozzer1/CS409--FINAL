@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { Button } from '@mui/material';
 
-export function Bus(){
+export function Bus({DATA}){
 const busData=[
 
     'Bus 1',
@@ -14,6 +14,10 @@ const busData=[
     'Bus 7',
     'Bus 8',
 ]
+// fetch(URL).then((response) => response.json())
+// .then((data) => console.log(data))
+// .catch((error) => console.log(error));
+
 
 return(
     <Box>
@@ -37,7 +41,7 @@ return(
                 backgroundColor: '#ABABAB',
                 opacity: '0.7',
                 paddingBottom: '10px',
-                
+
             }}
             >
                 <Button
@@ -47,16 +51,10 @@ return(
                     backgroundColor: '#D9D9D9',
                     width: '240px',
                     height: '30px',
-                    
-                    
 
-
-                    
                 }}
                 >
-
-                    
-                    <p
+ <p
                     style={{
                         position: 'relative',
                         right: '90px',
@@ -76,12 +74,13 @@ return(
 
         
         }}
+        
         >
             {busData.map((bus, key)=>(
                 <li>{bus}</li>
             ))}
         </ul>
-    
+    {<p>{DATA.long} , {DATA.lat},</p>}
     </Box>
     </Box>
     
