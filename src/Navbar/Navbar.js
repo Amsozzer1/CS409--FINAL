@@ -110,6 +110,7 @@ export default function Navbar(){
         navigate('/');
       }
     return (
+      <div style={{position: 'relative', zIndex: 2 }}>
         <AppBar position="static" sx={{bgcolor:"#13294B", height:"80px"}}>
             <Toolbar disableGutters sx={{minHeight:"80px", alignItems: 'center', justifyContent: 'space-between'}}>
                 <IconButton aria-label="Icon" size="largae" sx={{ color:"#E84A27", fontSize:"40px" }}> 
@@ -199,5 +200,6 @@ export default function Navbar(){
             </Toolbar>
             
         </AppBar>
+      </div>
     );
 }

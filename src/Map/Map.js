@@ -1,13 +1,8 @@
 import React from 'react';
 import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
 import Navbar from '../Navbar/Navbar';
-//import { GoogleMap, useLoadScript, MarkerF, InfoWindow  } from '@react-google-maps/api';
-//import { useState, useEffect } from 'react';
-
-//import Navbar from '../Navbar/Navbar';
-//import AdvSearch from '../AdvanceSearch/advsearch';
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -15,35 +10,46 @@ const mapContainerStyle = {
   height: '100%',
 };
 
-const Map = () => {
+const Map = (props) => {
+  let data = props.queryResult;
+
   const [long, setLong] = React.useState(0);
   const [lat, setLat] = React.useState(0);
   
   const [navigate, setNavigate] = React.useState(false);
 
+  const [currentLocation, setCurrentLocation] = React.useState(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  }, []);
+
+  const markerRef = useRef(null);
+
       
-  const [center, setCenter] = useState({ lat: 0, lng:0 });
-  navigator.geolocation.getCurrentPosition(function(position) {
-    //console.log(position.coords.longitude);
-    setLong(position.coords.longitude);
-    setLat(position.coords.latitude);
-    setCenter({ lat: lat, lng:long });
-  });
+  const [center, setCenter] = useState({ lat:  40.145714753336584, lng:-87.9655735301962 });
+  // navigator.geolocation.getCurrentPosition(function(position) {
+  //   //console.log(position.coords.longitude);
+  //   setLong(position.coords.longitude);
+  //   setLat(position.coords.latitude);
+  //   setCenter({ lat: lat, lng:long });
+  // });
   const [zoom, setZoom] = useState(16);
   const [selectedLocation, setSelectedLocation] = useState(null);
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyCG8MUFrbUkfNNxhg-gcs-DM5Rku9pSsHM',
-    libraries,
-  });
-
-  if (loadError) {
-    return <div>Error loading maps</div>;
-  }
-
-  if (!isLoaded) {
-    return <div>Loading maps</div>;
-  }
 
   const handleOnClick = (event) => {
     const clickedLat = event.latLng.lat();
@@ -60,9 +66,7 @@ const Map = () => {
   };
 
   return (
-    <div>
-      <Navbar />
-      <div style={{ top: '80px', height: 'calc(100vh - 80px)', width: '100%' }}>
+    <div style={{ height: '100vh', width: '100%', position: 'relative', zIndex: 1 }}>
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
           zoom={zoom}
@@ -74,9 +78,10 @@ const Map = () => {
             mapTypeControl: false,
           }}
         >
+          {/* <MarkerF position={currentLocation} icon={iconUrl} /> */}\
+          <MarkerF position={currentLocation} />
           <MarkerF position={center} />
-          {ROUTE && <DirectionsRenderer directions={ROUTE} />
-      }
+          {ROUTE && <DirectionsRenderer directions={ROUTE} />}
             {selectedLocation && (
             <InfoWindow
               position={selectedLocation}
@@ -109,14 +114,14 @@ const Map = () => {
               </div>
             </InfoWindow>
           )}
-          {/* <MarkerF position={center} /> */}
         </GoogleMap>
-        <AdvSearch />
-      </div>
-      <AdvSearch />
       
     </div>
   );
 };
 
 export default Map;
+
+
+
+

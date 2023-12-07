@@ -10,6 +10,7 @@ import BusStop from './Map/busStop.js';
 import { createBrowserRouter, RouterProvider, } from 'react-router-dom';
 import { UserProvider } from './User/User.js';
 import EventCalendar from './Calender/EventCalendar.js';
+import Navigation from './Navigation/Navigation.js';
 
 
 function App() {
@@ -19,7 +20,7 @@ function App() {
       id: "root",
 
       path: "/",
-      Component: Login,
+      Component: Navigation,
     },
     {
       path: "/register",
@@ -29,10 +30,10 @@ function App() {
       path: "/calendar",
       Component: EventCalendar,
     },
-    {
-      path: "/advsearch",
-      Component: AdvSearch,
-    },
+    // {
+    //   path: "/advsearch",
+    //   Component: AdvSearch,
+    // },
     {
       path: "/bus",
       Component: Bus,
@@ -42,8 +43,8 @@ function App() {
       Component: Stop,
     },
     {
-      path: "/map",
-      Component: Map,
+      path: "/navigation",
+      Component: Navigation,
     },
     {
       path: "/busStop",

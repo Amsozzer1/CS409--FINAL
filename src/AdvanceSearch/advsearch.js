@@ -25,26 +25,25 @@ const data = [
 
 
 
-export default function AdvSearch(){
+export default function AdvSearch(props){
+    const sendData = (mes)=>{
+        props.parentCallback(mes);
+    };
 
     const [open, setOpen] = React.useState(false);
     const [center, setCenter] = React.useState({ lat: 40.110558, lng: -88.228333 });
     const [directionResponse, setDirectionResponse] = React.useState(null);
     const [distance, setDistance] = React.useState(0);
     const [duration, setDuration] = React.useState(0);
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: 'AIzaSyCG8MUFrbUkfNNxhg-gcs-DM5Rku9pSsHM',
-        libraries,
-      });
-      const [long, setLong] = React.useState(0);
-      const [lat, setLat] = React.useState(0);
-      const [destination, setDestination] = React.useState('');
-      navigator.geolocation.getCurrentPosition(function(position) {
-        //console.log(position.coords.longitude);
-        setLong(position.coords.longitude);
-        setLat(position.coords.latitude);
-      });
-      
+    const [long, setLong] = React.useState(0);
+    const [lat, setLat] = React.useState(0);
+    const [destination, setDestination] = React.useState('');
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+    //console.log(position.coords.longitude);
+    setLong(position.coords.longitude);
+    setLat(position.coords.latitude);
+    });    
 
     async function calculateRoute()
     {
@@ -82,11 +81,12 @@ export default function AdvSearch(){
     }
 
     return (
+        <div style={{ position: 'relative', zIndex: 2 }}>
         <Box
         sx={{
             position: 'absolute',
-            top: '150px',
-            left: '20px',
+            top: '5vh',
+            left: '2.5vh',
         }}
         >
             
@@ -303,5 +303,6 @@ export default function AdvSearch(){
             
             
         </Box>
+        </div>
     );
 }
