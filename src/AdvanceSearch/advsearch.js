@@ -42,6 +42,7 @@ export default function AdvSearch(){
     const [selectedTime, setSelectedTime] = React.useState(null);
     const {user} = useUser();
     const events = user.getEvents();
+    console.log( events );
 
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
@@ -143,8 +144,8 @@ export default function AdvSearch(){
                         <em>Event in next two days</em>
                     </MenuItem>
                     {events.map( (event, index) => (
-                        <MenuItem key = {index} value = {EventSource.name}>
-                            {EventSource.name}
+                        <MenuItem key = {index} value = {event.title}>
+                            {event.title}
                         </MenuItem>
                     ))}
                 </Select>
