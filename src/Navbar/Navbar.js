@@ -136,7 +136,7 @@ export default function Navbar(){
 
                 <Box sx={{flexGrow:1}}/>
                 <IconButton aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
-                onClick = {() => {if(location.pathname !== '/map') navigate('/map')}}
+                onClick = {() => {if(location.pathname !== '/navigation') navigate('/navigation')}}
                 > 
                     <SearchIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
