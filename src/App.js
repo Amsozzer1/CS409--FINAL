@@ -2,7 +2,7 @@ import './App.css';
 import Login from './Login/Login.js';
 import Register from './Register/Register.js';
 import MonthlyCalendar from './Calender/calendar.js';
-import AdvSearch from './AdvanceSearch/advsearch.js';
+import AdvSearch from './AdvanceSearch/AdvSearch.js';
 import { Bus } from './Bus/bus.js';
 import { Stop } from './Bus/stop.js';
 import Map from './Map/Map.js';
@@ -30,10 +30,10 @@ function App() {
       path: "/calendar",
       Component: EventCalendar,
     },
-    // {
-    //   path: "/advsearch",
-    //   Component: AdvSearch,
-    // },
+    {
+      path: "/advsearch",
+      Component: AdvSearch,
+    },
     {
       path: "/bus",
       Component: Bus,
