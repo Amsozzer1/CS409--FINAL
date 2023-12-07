@@ -1,13 +1,8 @@
 import React from 'react';
-import { GoogleMap, useLoadScript, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
-import { useState, useEffect } from 'react';
-import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
+import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
+import { useState, useEffect, useRef } from 'react';
+import AdvSearch,{ROUTE} from '../AdvanceSearch/AdvSearch';
 import Navbar from '../Navbar/Navbar';
-//import { GoogleMap, useLoadScript, MarkerF, InfoWindow  } from '@react-google-maps/api';
-//import { useState, useEffect } from 'react';
-
-//import Navbar from '../Navbar/Navbar';
-//import AdvSearch from '../AdvanceSearch/advsearch';
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -15,55 +10,78 @@ const mapContainerStyle = {
   height: '100%',
 };
 
-const Map = () => {
+export var DESTINATION = '';
+
+const Map = (props) => {
+  let data = props.queryResult;
+
   const [long, setLong] = React.useState(0);
   const [lat, setLat] = React.useState(0);
+  
+  const [navigate, setNavigate] = React.useState(false);
+
+  const [currentLocation, setCurrentLocation] = React.useState(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  }, []);
+
 
       
-  const [center, setCenter] = useState({ lat: 0, lng:0 });
-  navigator.geolocation.getCurrentPosition(function(position) {
-    //console.log(position.coords.longitude);
-    setLong(position.coords.longitude);
-    setLat(position.coords.latitude);
-    setCenter({ lat: lat, lng:long });
-  });
+  const [center, setCenter] = useState({ lat:  40.145714753336584, lng:-87.9655735301962 });
+  // setCenter(currentLocation);
+  // navigator.geolocation.getCurrentPosition(function(position) {
+  //   //console.log(position.coords.longitude);
+  //   setLong(position.coords.longitude);
+  //   setLat(position.coords.latitude);
+  //   setCenter({ lat: lat, lng:long });
+  // });
   const [zoom, setZoom] = useState(16);
   const [selectedLocation, setSelectedLocation] = useState(null);
-
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: 'AIzaSyCG8MUFrbUkfNNxhg-gcs-DM5Rku9pSsHM',
-    libraries,
-  });
-
-  if (loadError) {
-    return <div>Error loading maps</div>;
-  }
-
-  if (!isLoaded) {
-    return <div>Loading maps</div>;
-  }
+  const [dest, setDest] = useState(null);
 
   const handleOnClick = (event) => {
     const clickedLat = event.latLng.lat();
     const clickedLng = event.latLng.lng();
 
     // console.log(`Clicked on: Lat ${clickedLat}, Lng ${clickedLng}`);
-    setCenter({ lat:clickedLat, lng:clickedLng });
+    // setCenter({ lat:clickedLat, lng:clickedLng });
     setSelectedLocation({ lat:clickedLat, lng:clickedLng });
+
   }
 
   const handleCloseInfoWindow = () => {
     setSelectedLocation(null);
   };
 
+  const handleNavigate =() => {
+    setDest(selectedLocation);
+    DESTINATION = selectedLocation
+  }
+  console.log(selectedLocation);
+  console.log(dest);
+
   return (
-    <div>
-      <Navbar />
-      <div style={{ top: '80px', height: 'calc(100vh - 80px)', width: '100%' }}>
+    // <div style={{ height: '89vh', width: '100%', position: 'relative', zIndex: 1 }}>
+    <div style={{ top: '80px', height: 'calc(100vh - 80px)', width: '100%' }}>
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
           zoom={zoom}
-          center={center}
+          center={currentLocation}
           onClick={handleOnClick}
           options={{
             fullscreenControl: false,
@@ -71,9 +89,11 @@ const Map = () => {
             mapTypeControl: false,
           }}
         >
-          <MarkerF position={center} />
-          {ROUTE && <DirectionsRenderer directions={ROUTE} />
-      }
+          <MarkerF position={currentLocation} />
+          {/* <MarkerF position={center} /> */}
+          {ROUTE && (
+            <DirectionsRenderer directions={ROUTE} />
+          )}
             {selectedLocation && (
             <InfoWindow
               position={selectedLocation}
@@ -84,18 +104,20 @@ const Map = () => {
                 <h2>Pin</h2>
                 <p>Latitude: {selectedLocation.lat}</p>
                 <p>Longitude: {selectedLocation.lng}</p>
-                <button>Navigate</button>
+                <button
+                  style={{zIndex:10}}
+                  onClick={handleNavigate}>Navigate</button>
               </div>
             </InfoWindow>
           )}
-          {/* <MarkerF position={center} /> */}
         </GoogleMap>
-        <AdvSearch />
-      </div>
-      <AdvSearch />
       
     </div>
   );
 };
 
 export default Map;
+
+
+
+

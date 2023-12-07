@@ -40,6 +40,7 @@ export default function Results({ data }) {
 
 
   return (
+    // <div style={{ position: 'relative', zIndex: 2 }}>
     <Box>
       {
         data.length>0?
@@ -49,7 +50,7 @@ export default function Results({ data }) {
                   position: 'relative',
                   top: '10px',
                   left: '0px',
-                  zIndex: '1',
+                  zIndex: '2',
               
               }
           }
@@ -59,9 +60,10 @@ export default function Results({ data }) {
                   sx={{
       
                       height: 'auto',
-                      width: '240px',
+                      width: '265px',
                       backgroundColor: '#ABABAB',
-                      opacity: '0.7',
+                      opacity: '0.9',
+                      borderRadius: '5px',
                       paddingBottom: '10px',
                       display: 'flex',
                       flexDirection: 'column',
@@ -75,7 +77,8 @@ export default function Results({ data }) {
                           position: 'relative',
                           color: 'black',
                           backgroundColor: '#D9D9D9',
-                          width: '240px',
+                          borderRadius: '5px',
+                          width: '265px',
                           height: '30px',
                           
                           
@@ -103,6 +106,6 @@ export default function Results({ data }) {
           </Box>):null
       }
     </Box>
-    
+    // </div>
   );
 }

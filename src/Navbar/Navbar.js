@@ -16,7 +16,7 @@ import { Dropdown } from '@mui/base/Dropdown';
 import { Menu } from '@mui/base/Menu';
 import { MenuButton  } from '@mui/base/MenuButton';
 import { MenuItem  } from '@mui/base/MenuItem';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useUser } from '../User/User.js';
 import { backendURL } from '../Backend/Backend.js';
@@ -26,6 +26,7 @@ export default function Navbar(){
     const { handleSetEvents } = useUser();
     const [img,setImg] = React.useState('');
     const navigate = useNavigate();
+    const location = useLocation();
     const createHandleMenuClick = (menuItem) => {
         return () => {
           console.log(`Clicked on ${menuItem}`);
@@ -110,6 +111,7 @@ export default function Navbar(){
         navigate('/');
       }
     return (
+      <div>
         <AppBar position="static" sx={{bgcolor:"#13294B", height:"80px"}}>
             <Toolbar disableGutters sx={{minHeight:"80px", alignItems: 'center', justifyContent: 'space-between'}}>
                 <IconButton aria-label="Icon" size="largae" sx={{ color:"#E84A27", fontSize:"40px" }}> 
@@ -134,16 +136,21 @@ export default function Navbar(){
                 </Typography>
 
                 <Box sx={{flexGrow:1}}/>
-                <IconButton aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
+                <IconButton aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
+                onClick = {() => {if(location.pathname !== '/navigation') navigate('/navigation')}}
+                > 
                     <SearchIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
-                <IconButton aria-label="bus stop" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
+                <IconButton aria-label="bus stop" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
+                onClick = {() => {if(location.pathname !== '/busStop') navigate('/busStop')}}
+                > 
                     <PlaceIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
-                <IconButton aria-label="calendar" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
+                <IconButton aria-label="calendar" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
+                onClick = {() => {if(location.pathname !== '/calendar') navigate('/calendar')}}
+                > 
                     <TodayIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
-                <Button aria-label="account" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}> 
                     
                 <Dropdown>
                 
@@ -190,9 +197,10 @@ export default function Navbar(){
                 </Dropdown>    
                     
 
-                </Button>
+                
             </Toolbar>
             
         </AppBar>
+      </div>
     );
 }
