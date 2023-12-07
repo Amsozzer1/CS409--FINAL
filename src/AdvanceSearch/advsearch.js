@@ -19,7 +19,7 @@ import '../index.css';
 import { v4 as uuidv4 } from 'uuid';
 import Typography from '@mui/material/Typography';
 import '../index.css';
-
+import { useUser } from '../User/User.js';
 const libraries = ['places'];
 
 export var ROUTE = '';
@@ -27,7 +27,13 @@ export var ROUTE = '';
     FROM Results.js*/
 const data = [
     
-   
+    {
+        id: 1,
+        name: 'Hawaii',
+        email: 'abc@gmail.com',
+        sirName: 'Hawaii',
+
+    }
     
   ];
 /* CHANGE DATA TO UPDATE RESULTS (fecth from backend based on
@@ -51,12 +57,14 @@ export default function AdvSearch(props){
     const [destination, setDestination] = React.useState('');
     const [selectedValue, setSelectedValue] = useState('');
     const [selectedTime, setSelectedTime] = React.useState(null);
+    const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
 
+    const {user} = useUser();
+    const events = user.getEvents();
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
     }
 
-    const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
 
     const addDestination = () => {
         setDestinations([...destinations, { id: uuidv4(), name: '' }]);
@@ -202,9 +210,11 @@ export default function AdvSearch(props){
                     <MenuItem value="">
                         <em>Event in next two days</em>
                     </MenuItem>
-                    <MenuItem value="destination1">Event 1</MenuItem>
-                    <MenuItem value="destination2">Event 2</MenuItem>
-                    <MenuItem value="destination3">Event 3</MenuItem>
+                    {events.map( (event, index) => (
+                        <MenuItem key = {index} value = {EventSource.name}>
+                            {EventSource.name}
+                        </MenuItem>
+                    ))}
                 </Select>
                 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
