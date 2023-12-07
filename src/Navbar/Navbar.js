@@ -77,7 +77,7 @@ export default function Navbar(){
               // User not found in the database
               if (response.status === 404) {
                 console.log('User not found in the database');
-                return [];
+                return {events: []};
               } else {
                 // Handle other non-success status codes
                 console.error(`Error fetching events: ${response.status}`);
@@ -86,6 +86,7 @@ export default function Navbar(){
             return response.json();
           })
           .then(data => {
+            sessionStorage.setItem(userId, JSON.stringify(data.events));
             const events = data.events.map((event) => {
               return {
                 ...event,
