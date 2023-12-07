@@ -26,15 +26,7 @@ const data = [
         email: 'abc@gmail.com',
         sirName: 'Hawaii',
 
-    },
-    {
-        id: 2,
-        name: 'Hawaii',
-        email: 'abc@gmail.com',
-        sirName: 'Hawaii',
-
     }
-   
     
   ];
 /* CHANGE DATA TO UPDATE RESULTS (fecth from backend based on
