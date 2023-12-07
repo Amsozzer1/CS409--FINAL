@@ -30,10 +30,10 @@ function App() {
       path: "/calendar",
       Component: EventCalendar,
     },
-    // {
-    //   path: "/advsearch",
-    //   Component: AdvSearch,
-    // },
+    {
+      path: "/advsearch",
+      Component: AdvSearch,
+    },
     {
       path: "/bus",
       Component: Bus,
