@@ -1,7 +1,7 @@
 import React from 'react';
 import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
 import { useState, useEffect, useRef } from 'react';
-import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
+import AdvSearch,{ROUTE} from '../AdvanceSearch/AdvSearch';
 import Navbar from '../Navbar/Navbar';
 
 const libraries = ['places'];
@@ -9,6 +9,8 @@ const mapContainerStyle = {
   width: '100%',
   height: '100%',
 };
+
+export var DESTINATION = '';
 
 const Map = (props) => {
   let data = props.queryResult;
@@ -38,10 +40,10 @@ const Map = (props) => {
     }
   }, []);
 
-  const markerRef = useRef(null);
 
       
   const [center, setCenter] = useState({ lat:  40.145714753336584, lng:-87.9655735301962 });
+  // setCenter(currentLocation);
   // navigator.geolocation.getCurrentPosition(function(position) {
   //   //console.log(position.coords.longitude);
   //   setLong(position.coords.longitude);
@@ -50,6 +52,7 @@ const Map = (props) => {
   // });
   const [zoom, setZoom] = useState(16);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [dest, setDest] = useState(null);
 
   const handleOnClick = (event) => {
     const clickedLat = event.latLng.lat();
@@ -65,12 +68,20 @@ const Map = (props) => {
     setSelectedLocation(null);
   };
 
+  const handleNavigate =() => {
+    setDest(selectedLocation);
+    DESTINATION = selectedLocation
+  }
+  console.log(selectedLocation);
+  console.log(dest);
+
   return (
-    <div style={{ height: '100vh', width: '100%', position: 'relative', zIndex: 1 }}>
+    // <div style={{ height: '89vh', width: '100%', position: 'relative', zIndex: 1 }}>
+    <div style={{ top: '80px', height: 'calc(100vh - 80px)', width: '100%' }}>
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
           zoom={zoom}
-          center={center}
+          center={currentLocation}
           onClick={handleOnClick}
           options={{
             fullscreenControl: false,
@@ -78,10 +89,11 @@ const Map = (props) => {
             mapTypeControl: false,
           }}
         >
-          {/* <MarkerF position={currentLocation} icon={iconUrl} /> */}\
           <MarkerF position={currentLocation} />
-          <MarkerF position={center} />
-          {ROUTE && <DirectionsRenderer directions={ROUTE} />}
+          {/* <MarkerF position={center} /> */}
+          {ROUTE && (
+            <DirectionsRenderer directions={ROUTE} />
+          )}
             {selectedLocation && (
             <InfoWindow
               position={selectedLocation}
@@ -93,24 +105,8 @@ const Map = (props) => {
                 <p>Latitude: {selectedLocation.lat}</p>
                 <p>Longitude: {selectedLocation.lng}</p>
                 <button
-                style={{zIndex:10}}
-                onClick={() => {
-
-                  setNavigate(true);
-                  
-                  
-                  
-                }}
-                
-                
-                >Navigate</button>
-                      {
-                        navigate && (
-                          <Marker position={{ lat: selectedLocation.lat, lng:selectedLocation.lng }} />
-                        )
-                      }
-                    
-
+                  style={{zIndex:10}}
+                  onClick={handleNavigate}>Navigate</button>
               </div>
             </InfoWindow>
           )}

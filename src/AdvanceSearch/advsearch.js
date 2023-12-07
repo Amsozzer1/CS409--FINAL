@@ -4,17 +4,26 @@ import Box from '@mui/material/Box';
 import { Button } from '@mui/material';
 import {Input} from '@mui/material';
 import {Search} from '@mui/icons-material';
-import Results from '../AdvanceSearch/Results.js';
-import {useLoadScript,Autocomplete } from '@react-google-maps/api';
+// <<<<<<< wangzhe
+import Results from './Results.js';
+import {useLoadScript,Autocomplete,DirectionsRenderer } from '@react-google-maps/api';
+// import { DESTINATION } from '../Map/Map.js';
+
+import { useState, useEffect, useRef } from 'react';
+
+// =======
+// import Results from '../AdvanceSearch/Results.js';
+// import {useLoadScript,Autocomplete } from '@react-google-maps/api';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { Select, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+// >>>>>>> main
 import '../index.css';
 import { v4 as uuidv4 } from 'uuid';
 import Typography from '@mui/material/Typography';
@@ -25,20 +34,23 @@ const libraries = ['places'];
 export var ROUTE = '';
 /* CHANGE DATA TO UPDATE RESULTS AND ALSO CHANGE AVATAR
     FROM Results.js*/
-const data = [
+// const data = [
     
-    {
-        id: 1,
-        name: 'Hawaii',
-        email: 'abc@gmail.com',
-        sirName: 'Hawaii',
+//     {
+//         id: 1,
+//         name: 'Hawaii',
+//         email: 'abc@gmail.com',
+//         sirName: 'Hawaii',
 
-    }
+//     }
     
-  ];
+//   ];
 /* CHANGE DATA TO UPDATE RESULTS (fecth from backend based on
     the search query?)
 */
+
+
+export var BUS = '';
 
 
 
@@ -47,89 +59,239 @@ export default function AdvSearch(props){
         props.parentCallback(mes);
     };
 
-    const [open, setOpen] = React.useState(false);
-    const [center, setCenter] = React.useState({ lat: 40.110558, lng: -88.228333 });
-    const [directionResponse, setDirectionResponse] = React.useState(null);
-    const [distance, setDistance] = React.useState(0);
-    const [duration, setDuration] = React.useState(0);
-    const [long, setLong] = React.useState(0);
-    const [lat, setLat] = React.useState(0);
-    const [destination, setDestination] = React.useState('');
-    const [selectedValue, setSelectedValue] = useState('');
-    const [selectedTime, setSelectedTime] = React.useState(null);
-    const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
+// <<<<<<< wangzhe
+    
 
-    const {user} = useUser();
-    const events = user.getEvents();
-    const handleChange = (event) => {
-        setSelectedValue(event.target.value);
+    const [open, setOpen] = useState(false);
+    // const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
+    // const [directionResponse, setDirectionResponse] = useState(null);
+    // const [distance, setDistance] = useState(0);
+    // const [duration, setDuration] = useState(0);
+    // const [long, setLong] = useState(-88.22884);
+    // const [lat, setLat] = useState(40.11644);
+    
+
+    // const [data, setData] = useState([]);
+   
+
+    const [origin, setOrigin] = useState({lat: 40.12233, lon: -88.29619});
+    const [destination, setDestination] = useState({lat: 40.11626, lon: -88.25783});
+
+    const [itinerary, setItinerary] = useState(null);
+
+    const [walkTrip, setWalkTrip] = useState([]);
+    const [busTrip, setBusTrip] = useState([]);
+
+    const [busTripInfo, setBusTripInfo] = useState([]);
+
+    const [routeShape, setRouteShape] = useState(null);
+
+    const [currRoute, setCurrRoute] = useState("");
+    const [vehicles, setVehicles] = useState([]);
+
+    
+
+    // setOrigin({lat: 40.12233, lon: -88.29619})
+    // setDestination({lat: 40.11626, lon: -88.25783});
+
+    console.log(origin);
+    console.log(destination);
+
+    // const [originStop, setOriginStop] = useState(null);
+    // const [destStop, setDestStop] = useState(null);
+
+    // const [stopData, setStopData] = useState([]);
+    // const [closestStop, setClosestStop] = useState(null);
+    // const [markers, setMarkers] = useState([]);
+
+    async function getPlannedTrip() {
+        const URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;
+      
+        try {
+            const response = await fetch(URL);
+            const data = await response.json();
+            const currItinerary = data.itineraries[0];
+
+            // const startTime = currItinerary.start_time;
+            // const endTime = currItinerary.end_time;
+            // const travelTime = currItinerary.travel_time;
+
+            const trips = currItinerary.legs;
+
+            // console.log(trips);
+
+            let walkTrips = []
+            let busTrips = [];
+            if (trips !== null) {
+                for (let i = 0; i < trips.length; ++i) {
+                    let trip = trips[i];
+
+                    if (trip.type === 'Walk') {
+                        walkTrips.push(trip);
+                    } else if (trip.type === 'Service') {
+                        busTrips.push(trip)
+                    }
+                }
+// =======
+//     const [open, setOpen] = React.useState(false);
+//     const [center, setCenter] = React.useState({ lat: 40.110558, lng: -88.228333 });
+//     const [directionResponse, setDirectionResponse] = React.useState(null);
+//     const [distance, setDistance] = React.useState(0);
+//     const [duration, setDuration] = React.useState(0);
+//     const [long, setLong] = React.useState(0);
+//     const [lat, setLat] = React.useState(0);
+//     const [destination, setDestination] = React.useState('');
+//     const [selectedValue, setSelectedValue] = useState('');
+//     const [selectedTime, setSelectedTime] = React.useState(null);
+//     const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
+
+//     const {user} = useUser();
+//     const events = user.getEvents();
+//     const handleChange = (event) => {
+//         setSelectedValue(event.target.value);
+//     }
+
+
+//     const addDestination = () => {
+//         setDestinations([...destinations, { id: uuidv4(), name: '' }]);
+//     };
+
+//     const removeDestination = (id) => {
+//         setDestinations(destinations.filter(dest => dest.id !== id));
+//       };
+
+//     const handleDestinationChange = (id, newValue) => {
+//         const newDestinations = destinations.map(dest => {
+//           if (dest.id === id) {
+//             return { ...dest, name: newValue };
+//           }
+//           return dest;
+//         });
+//         setDestinations(newDestinations);
+//       };
+//     navigator.geolocation.getCurrentPosition(function(position) {
+//     //console.log(position.coords.longitude);
+//     setLong(position.coords.longitude);
+//     setLat(position.coords.latitude);
+//     });    
+
+//     async function calculateRoute()
+//     {
+//         if(destination !== ''|| (lat !== 0 && long !== 0))
+//         {
+//            console.log("HERE "+destination);
+//            console.log("HERE "+lat);
+//            console.log("HERE "+long);
+//            const directionsService = new google.maps.DirectionsService();
+//            const results = await directionsService.route({
+//             origin: { lat: lat, lng: long },
+//             destination: destination,
+//             travelMode: google.maps.TravelMode.DRIVING,
+            
+// >>>>>>> main
+            }
+
+            setItinerary(data.itineraries[0]);
+            setWalkTrip(walkTrips);
+            setBusTrip(busTrips);
+            
+            // console.log(walkTrip);
+            // console.log(busTrip);
+
+
+          } catch (error) {
+            console.error('Error fetching stop data: ', error);
+          }
+    }
+
+    function getBusInfo() {
+        let busInfo = [];
+        for (let i = 0; i < busTrip.length; ++i) {
+            let bus = {};
+            let service = busTrip[i].services[0]
+
+            bus.origin = service.begin.stop_id;
+            bus.destination = service.end.stop_id;
+            bus.route = service.route.route_id;
+
+            busInfo.push(bus);
+        }
+
+        setBusTripInfo(busInfo);
+
+        console.log(busTripInfo);
+    }
+
+    async function getVehicle() {
+        const URL = `https://developer.mtd.org/api/v2.2/json/getvehiclesbyroute?key=ca74c75b34e64cc9bde55c9714918493&route_id=${currRoute}`;
+      
+        try {
+            const response = await fetch(URL);
+            const data = await response.json();
+
+            // console.log(data);
+
+            const currVehicles = data.vehicles;
+            
+
+            console.log(currVehicles);
+
+            setVehicles(currVehicles);
+
+            // setItinerary(data.itineraries[0]);
+            // setWalkTrip(walkTrips);
+            // setBusTrip(busTrips);
+            
+            console.log(vehicles);
+
+
+          } catch (error) {
+            console.error('Error fetching stop data: ', error);
+          }
     }
 
 
-    const addDestination = () => {
-        setDestinations([...destinations, { id: uuidv4(), name: '' }]);
-    };
 
-    const removeDestination = (id) => {
-        setDestinations(destinations.filter(dest => dest.id !== id));
-      };
+    const { isLoaded, loadError } = useLoadScript({
+        googleMapsApiKey: 'AIzaSyCG8MUFrbUkfNNxhg-gcs-DM5Rku9pSsHM',
+        libraries,
+      });
+    
+      if (loadError) {
+        return <div>Error loading maps</div>;
+      }
+    
+      if (!isLoaded) {
+        return <div>Loading maps</div>;
+      }
 
-    const handleDestinationChange = (id, newValue) => {
-        const newDestinations = destinations.map(dest => {
-          if (dest.id === id) {
-            return { ...dest, name: newValue };
-          }
-          return dest;
-        });
-        setDestinations(newDestinations);
-      };
-    navigator.geolocation.getCurrentPosition(function(position) {
-    //console.log(position.coords.longitude);
-    setLong(position.coords.longitude);
-    setLat(position.coords.latitude);
-    });    
 
-    async function calculateRoute()
-    {
-        if(destination !== ''|| (lat !== 0 && long !== 0))
-        {
-           console.log("HERE "+destination);
-           console.log("HERE "+lat);
-           console.log("HERE "+long);
-           const directionsService = new google.maps.DirectionsService();
-           const results = await directionsService.route({
-            origin: { lat: lat, lng: long },
-            destination: destination,
-            travelMode: google.maps.TravelMode.DRIVING,
-            
-            }
-            );
-            setDirectionResponse(results);
-            setDistance(results.routes[0].legs[0].distance.text);
-            setDuration(results.routes[0].legs[0].duration.text);
-            console.log(directionResponse);
-            console.log(distance);
-            console.log(duration);
-            ROUTE = directionResponse;
-            return <h1>Results:{directionResponse}
-            <br></br>
-            Distance: {distance}
-            <br></br>
-            Duration: {duration}
-            </h1>
 
+    function handleSearch() {
+        getPlannedTrip();
+
+        getBusInfo();
+
+        if (busTripInfo.length > 0) {
+            setCurrRoute(busTripInfo[0].route);
         }
-        else{
-            return;
+
+        if (currRoute !== "") {
+            getVehicle();
         }
+        
+
+
+        console.log(itinerary);
     }
 
     return (
-        <div style={{ position: 'relative', zIndex: 2 }}>
+        // <div style={{ position: 'relative', zIndex: 2 }}>
+        // <div>
         <Box
         sx={{
             position: 'absolute',
-            top: '5vh',
+            top: '15vh',
             left: '2.5vh',
         }}
         >
@@ -379,13 +541,7 @@ export default function AdvSearch(props){
                     ></Input>
                 </Autocomplete>
                     <Button
-                    onClick={
-                        ()=>{
-                            calculateRoute();
-                        
-                            setDestination(document.getElementsByName('destination')[0].value);
-                        }
-                    }
+                    onClick={handleSearch}
                     >
                     <Search
                     sx={{
@@ -399,10 +555,11 @@ export default function AdvSearch(props){
                 
             </Box>
             }
-            <Results data={data}></Results>
+            
+            {/* <Results data={data}></Results> */}
             
             
         </Box>
-        </div>
+        // </div>
     );
-}
+};
