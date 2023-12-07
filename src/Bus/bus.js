@@ -2,19 +2,25 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { Button } from '@mui/material';
 
-export function Bus(){
-const busData=[
+export function Bus({DATA}){
+const [busData, setBusData] = React.useState([]);
+React.useEffect(() => {
+    async function getStopData() {
+      const URL = `https://developer.mtd.org/api/v2.2/json/getdeparturesbystop?key=ca74c75b34e64cc9bde55c9714918493&stop_id=${DATA.stop_id}&count=8`;
+      
+      try {
+        const response = await fetch(URL);
+      const data = await response.json();
+      const stops = data.departures.map(departure => departure.headsign);
+      setBusData(stops);
+      console.log(stops);
+      } catch (error) {
+        console.error('Error fetching stop data: ', error);
+      }
+    }
 
-    'Bus 1',
-    'Bus 2',
-    'Bus 3',
-    'Bus 4',
-    'Bus 5',
-    'Bus 6',
-    'Bus 7',
-    'Bus 8',
-]
-
+    getStopData();
+  }, [DATA]);
 return(
     <Box>
     
@@ -31,7 +37,7 @@ return(
         
         <Box
             sx={{
-
+                
                 height: 'auto',
                 width: '240px',
                 backgroundColor: '#ABABAB',

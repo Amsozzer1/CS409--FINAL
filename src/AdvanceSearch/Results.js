@@ -49,7 +49,7 @@ export default function Results({ data }) {
                   position: 'relative',
                   top: '10px',
                   left: '0px',
-                  zIndex: '1',
+                  zIndex: '2',
               
               }
           }

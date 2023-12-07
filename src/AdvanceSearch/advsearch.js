@@ -16,6 +16,7 @@ import Results from '../AdvanceSearch/Results.js';
 import '../index.css';
 import { v4 as uuidv4 } from 'uuid';
 import Typography from '@mui/material/Typography';
+import { useUser } from '../User/User.js';
 
 /* CHANGE DATA TO UPDATE RESULTS AND ALSO CHANGE AVATAR
     FROM Results.js*/
@@ -32,12 +33,15 @@ const data = [
 /* CHANGE DATA TO UPDATE RESULTS (fecth from backend based on
     the search query?)
 */
+export var ROUTE = '';
 
 export default function AdvSearch(){
 
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = useState('');
     const [selectedTime, setSelectedTime] = React.useState(null);
+    const {user} = useUser();
+    const events = user.getEvents();
 
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
@@ -69,6 +73,7 @@ export default function AdvSearch(){
             position: 'absolute',
             top: '150px',
             left: '20px',
+            zIndex: '2'
         }}
         >
             
@@ -137,9 +142,11 @@ export default function AdvSearch(){
                     <MenuItem value="">
                         <em>Event in next two days</em>
                     </MenuItem>
-                    <MenuItem value="destination1">Event 1</MenuItem>
-                    <MenuItem value="destination2">Event 2</MenuItem>
-                    <MenuItem value="destination3">Event 3</MenuItem>
+                    {events.map( (event, index) => (
+                        <MenuItem key = {index} value = {EventSource.name}>
+                            {EventSource.name}
+                        </MenuItem>
+                    ))}
                 </Select>
                 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
