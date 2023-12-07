@@ -60,6 +60,37 @@ export default function AdvSearch(props){
     };
 
 // <<<<<<< wangzhe
+
+    const {user} = useUser();
+    const events = user.getEvents();
+    const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+    }
+
+    const [selectedValue, setSelectedValue] = useState('');
+    const [selectedTime, setSelectedTime] = React.useState(null);
+    const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
+
+    const addDestination = () => {
+        setDestinations([...destinations, { id: uuidv4(), name: '' }]);
+    };
+
+    const removeDestination = (id) => {
+        setDestinations(destinations.filter(dest => dest.id !== id));
+        };
+
+    const handleDestinationChange = (id, newValue) => {
+        const newDestinations = destinations.map(dest => {
+            if (dest.id === id) {
+            return { ...dest, name: newValue };
+            }
+            return dest;
+        });
+        setDestinations(newDestinations);
+        };
+
+
+
     
 
     const [open, setOpen] = useState(false);
@@ -141,15 +172,15 @@ export default function AdvSearch(props){
 //     const [long, setLong] = React.useState(0);
 //     const [lat, setLat] = React.useState(0);
 //     const [destination, setDestination] = React.useState('');
-//     const [selectedValue, setSelectedValue] = useState('');
+    // const [selectedValue, setSelectedValue] = useState('');
 //     const [selectedTime, setSelectedTime] = React.useState(null);
 //     const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
 
 //     const {user} = useUser();
 //     const events = user.getEvents();
-//     const handleChange = (event) => {
-//         setSelectedValue(event.target.value);
-//     }
+    // const handleChange = (event) => {
+    //     setSelectedValue(event.target.value);
+    // }
 
 
 //     const addDestination = () => {
