@@ -63,15 +63,17 @@ export default function AdvSearch(props){
     
 
     const [open, setOpen] = useState(false);
-    // const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
-    // const [directionResponse, setDirectionResponse] = useState(null);
-    // const [distance, setDistance] = useState(0);
-    // const [duration, setDuration] = useState(0);
-    // const [long, setLong] = useState(-88.22884);
-    // const [lat, setLat] = useState(40.11644);
-    
+    const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
+    const [directionResponse, setDirectionResponse] = useState(null);
+    const [distance, setDistance] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [long, setLong] = useState(-88.22884);
+    const [lat, setLat] = useState(40.11644);
+    const [selectedValue, setSelectedValue] = useState('');
+    const [selectedTime, setSelectedTime] = React.useState(null);
+    const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
 
-    // const [data, setData] = useState([]);
+    const [data, setData] = useState([]);
    
 
     const [origin, setOrigin] = useState({lat: 40.12233, lon: -88.29619});
@@ -91,18 +93,47 @@ export default function AdvSearch(props){
 
     
 
+    const {user} = useUser();
+    const events = user.getEvents();
+    const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+    }
+
+    const addDestination = () => {
+        setDestinations([...destinations, { id: uuidv4(), name: '' }]);
+    };
+
+    const removeDestination = (id) => {
+        setDestinations(destinations.filter(dest => dest.id !== id));
+      };
+
+    const handleDestinationChange = (id, newValue) => {
+        const newDestinations = destinations.map(dest => {
+          if (dest.id === id) {
+            return { ...dest, name: newValue };
+          }
+          return dest;
+        });
+        setDestinations(newDestinations);
+      };
+    navigator.geolocation.getCurrentPosition(function(position) {
+    console.log(position.coords.longitude);
+    setLong(position.coords.longitude);
+    setLat(position.coords.latitude);
+    });    
+
     // setOrigin({lat: 40.12233, lon: -88.29619})
     // setDestination({lat: 40.11626, lon: -88.25783});
 
     console.log(origin);
     console.log(destination);
 
-    // const [originStop, setOriginStop] = useState(null);
-    // const [destStop, setDestStop] = useState(null);
+    const [originStop, setOriginStop] = useState(null);
+    const [destStop, setDestStop] = useState(null);
 
-    // const [stopData, setStopData] = useState([]);
-    // const [closestStop, setClosestStop] = useState(null);
-    // const [markers, setMarkers] = useState([]);
+    const [stopData, setStopData] = useState([]);
+    const [closestStop, setClosestStop] = useState(null);
+    const [markers, setMarkers] = useState([]);
 
     async function getPlannedTrip() {
         const URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;
@@ -112,9 +143,9 @@ export default function AdvSearch(props){
             const data = await response.json();
             const currItinerary = data.itineraries[0];
 
-            // const startTime = currItinerary.start_time;
-            // const endTime = currItinerary.end_time;
-            // const travelTime = currItinerary.travel_time;
+            const startTime = currItinerary.start_time;
+            const endTime = currItinerary.end_time;
+            const travelTime = currItinerary.travel_time;
 
             const trips = currItinerary.legs;
 
@@ -195,8 +226,8 @@ export default function AdvSearch(props){
             setWalkTrip(walkTrips);
             setBusTrip(busTrips);
             
-            // console.log(walkTrip);
-            // console.log(busTrip);
+            console.log(walkTrip);
+            console.log(busTrip);
 
 
           } catch (error) {
@@ -229,7 +260,7 @@ export default function AdvSearch(props){
             const response = await fetch(URL);
             const data = await response.json();
 
-            // console.log(data);
+            console.log(data);
 
             const currVehicles = data.vehicles;
             
@@ -238,9 +269,9 @@ export default function AdvSearch(props){
 
             setVehicles(currVehicles);
 
-            // setItinerary(data.itineraries[0]);
-            // setWalkTrip(walkTrips);
-            // setBusTrip(busTrips);
+            setItinerary(data.itineraries[0]);
+            setWalkTrip(walkTrips);
+            setBusTrip(busTrips);
             
             console.log(vehicles);
 
