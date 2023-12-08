@@ -113,6 +113,7 @@ export default function AdvSearch(props){
     const [walkTrip, setWalkTrip] = useState([]);
     const [busTrip, setBusTrip] = useState([]);
 
+    const [walkTripInfo, setWalkTripInfo] = useState([]);
     const [busTripInfo, setBusTripInfo] = useState([]);
 
     const [routeShape, setRouteShape] = useState(null);
@@ -120,20 +121,6 @@ export default function AdvSearch(props){
     const [currRoute, setCurrRoute] = useState("");
     const [vehicles, setVehicles] = useState([]);
 
-    
-
-    // setOrigin({lat: 40.12233, lon: -88.29619})
-    // setDestination({lat: 40.11626, lon: -88.25783});
-
-    console.log(origin);
-    console.log(destination);
-
-    // const [originStop, setOriginStop] = useState(null);
-    // const [destStop, setDestStop] = useState(null);
-
-    // const [stopData, setStopData] = useState([]);
-    // const [closestStop, setClosestStop] = useState(null);
-    // const [markers, setMarkers] = useState([]);
 
     async function getPlannedTrip() {
         const URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;
@@ -143,9 +130,6 @@ export default function AdvSearch(props){
             const data = await response.json();
             const currItinerary = data.itineraries[0];
 
-            // const startTime = currItinerary.start_time;
-            // const endTime = currItinerary.end_time;
-            // const travelTime = currItinerary.travel_time;
 
             const trips = currItinerary.legs;
 
@@ -163,70 +147,14 @@ export default function AdvSearch(props){
                         busTrips.push(trip)
                     }
                 }
-// =======
-//     const [open, setOpen] = React.useState(false);
-//     const [center, setCenter] = React.useState({ lat: 40.110558, lng: -88.228333 });
-//     const [directionResponse, setDirectionResponse] = React.useState(null);
-//     const [distance, setDistance] = React.useState(0);
-//     const [duration, setDuration] = React.useState(0);
-//     const [long, setLong] = React.useState(0);
-//     const [lat, setLat] = React.useState(0);
-//     const [destination, setDestination] = React.useState('');
-    // const [selectedValue, setSelectedValue] = useState('');
-//     const [selectedTime, setSelectedTime] = React.useState(null);
-//     const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
 
-//     const {user} = useUser();
-//     const events = user.getEvents();
-    // const handleChange = (event) => {
-    //     setSelectedValue(event.target.value);
-    // }
-
-
-//     const addDestination = () => {
-//         setDestinations([...destinations, { id: uuidv4(), name: '' }]);
-//     };
-
-//     const removeDestination = (id) => {
-//         setDestinations(destinations.filter(dest => dest.id !== id));
-//       };
-
-//     const handleDestinationChange = (id, newValue) => {
-//         const newDestinations = destinations.map(dest => {
-//           if (dest.id === id) {
-//             return { ...dest, name: newValue };
-//           }
-//           return dest;
-//         });
-//         setDestinations(newDestinations);
-//       };
-//     navigator.geolocation.getCurrentPosition(function(position) {
-//     //console.log(position.coords.longitude);
-//     setLong(position.coords.longitude);
-//     setLat(position.coords.latitude);
-//     });    
-
-//     async function calculateRoute()
-//     {
-//         if(destination !== ''|| (lat !== 0 && long !== 0))
-//         {
-//            console.log("HERE "+destination);
-//            console.log("HERE "+lat);
-//            console.log("HERE "+long);
-//            const directionsService = new google.maps.DirectionsService();
-//            const results = await directionsService.route({
-//             origin: { lat: lat, lng: long },
-//             destination: destination,
-//             travelMode: google.maps.TravelMode.DRIVING,
-            
-// >>>>>>> main
             }
 
             setItinerary(data.itineraries[0]);
             setWalkTrip(walkTrips);
             setBusTrip(busTrips);
             
-            // console.log(walkTrip);
+            console.log(walkTrip);
             // console.log(busTrip);
 
 
@@ -235,29 +163,69 @@ export default function AdvSearch(props){
           }
     }
 
-    function getBusInfo() {
+    async function getWalkInfo() {
+        let walkInfo = [];
+        let walkResult = [];
+        for (let i = 0; i < walkTrip.length; ++i) {
+            let walk = {};
+            walk.origin = walkTrip[i].walk.begin;
+            walk.destnation = walkTrip[i].walk.end;
+
+            walkInfo.push(walk);
+
+            const directionsService = new google.maps.DirectionsService();
+            const results = await directionsService.route({
+                origin: { lat: walk.origin.lat, lng: walk.origin.lon },
+                destination: { lat: walk.destnation.lat, lng: walk.destnation.lon },
+                travelMode: google.maps.TravelMode.WALKING,   
+            });
+
+            walkResult.push(results);
+        }
+
+        console.log(walkResult);
+
+        setWalkTripInfo(walkInfo);
+        console.log(walkTripInfo);
+    }
+
+    async function getBusInfo() {
         let busInfo = [];
         for (let i = 0; i < busTrip.length; ++i) {
             let bus = {};
             let service = busTrip[i].services[0]
 
+            const URL = `https://developer.mtd.org/api/v2.2/json/getshape?key=ca74c75b34e64cc9bde55c9714918493&shape_id=${service.trip.shape_id}`;
+            try {
+                const response = await fetch(URL);
+                const data = await response.json();
+
+                bus.shape = data.shapes;
+            } catch (error) {
+                console.error('Error fetching stop data: ', error);
+            }
+
+
+
             bus.origin = service.begin.stop_id;
             bus.destination = service.end.stop_id;
             bus.route = service.route.route_id;
+            // bus.shape = service.trip.shape_id;
+            bus.trip = service.trip.trip_id;
 
             busInfo.push(bus);
         }
 
         setBusTripInfo(busInfo);
 
-        console.log(busTripInfo);
+        // console.log(busTripInfo);
     }
 
-    async function getVehicle() {
-        const URL = `https://developer.mtd.org/api/v2.2/json/getvehiclesbyroute?key=ca74c75b34e64cc9bde55c9714918493&route_id=${currRoute}`;
+    async function getVehicles() {
+        const vehicleURL = `https://developer.mtd.org/api/v2.2/json/getvehiclesbyroute?key=ca74c75b34e64cc9bde55c9714918493&route_id=${currRoute}`;
       
         try {
-            const response = await fetch(URL);
+            const response = await fetch(vehicleURL);
             const data = await response.json();
 
             // console.log(data);
@@ -265,20 +233,14 @@ export default function AdvSearch(props){
             const currVehicles = data.vehicles;
             
 
-            console.log(currVehicles);
-
             setVehicles(currVehicles);
-
-            // setItinerary(data.itineraries[0]);
-            // setWalkTrip(walkTrips);
-            // setBusTrip(busTrips);
             
-            console.log(vehicles);
+            // console.log(vehicles);
 
 
-          } catch (error) {
+        } catch (error) {
             console.error('Error fetching stop data: ', error);
-          }
+        }
     }
 
 
@@ -301,14 +263,16 @@ export default function AdvSearch(props){
     function handleSearch() {
         getPlannedTrip();
 
+        getWalkInfo();
         getBusInfo();
 
         if (busTripInfo.length > 0) {
+            // console.log(busTripInfo);
             setCurrRoute(busTripInfo[0].route);
         }
 
         if (currRoute !== "") {
-            getVehicle();
+            getVehicles();
         }
         
 
