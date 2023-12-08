@@ -63,6 +63,15 @@ export default function AdvSearch(props){
 
     const {user} = useUser();
     const events = user.getEvents();
+    console.log( events );
+    const now = new Date();
+    const twoDaysLater = new Date( now.getTime() + ( 2*24*60*60*1000) );
+
+    const upcomingEvents = events.filter( event => {
+        const eventStart = new Date( event.start );
+        return eventStart >= now && eventStart <= twoDaysLater;
+    });
+
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
     }
@@ -367,9 +376,9 @@ export default function AdvSearch(props){
                     <MenuItem value="">
                         <em>Event in next two days</em>
                     </MenuItem>
-                    {events.map( (event, index) => (
-                        <MenuItem key = {index} value = {EventSource.name}>
-                            {EventSource.name}
+                    {upcomingEvents.map( (event, index) => (
+                        <MenuItem key = {index} value = {event.title}>
+                            {event.title}
                         </MenuItem>
                     ))}
                 </Select>

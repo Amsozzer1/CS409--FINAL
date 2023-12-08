@@ -78,7 +78,7 @@ export default function Navbar(){
               // User not found in the database
               if (response.status === 404) {
                 console.log('User not found in the database');
-                return [];
+                return {events: []};
               } else {
                 // Handle other non-success status codes
                 console.error(`Error fetching events: ${response.status}`);
@@ -87,6 +87,7 @@ export default function Navbar(){
             return response.json();
           })
           .then(data => {
+            sessionStorage.setItem(userId, JSON.stringify(data.events));
             const events = data.events.map((event) => {
               return {
                 ...event,
@@ -110,7 +111,7 @@ export default function Navbar(){
         navigate('/');
       }
     return (
-      <div style={{position: 'relative', zIndex: 2 }}>
+      <div>
         <AppBar position="static" sx={{bgcolor:"#13294B", height:"80px"}}>
             <Toolbar disableGutters sx={{minHeight:"80px", alignItems: 'center', justifyContent: 'space-between'}}>
                 <IconButton aria-label="Icon" size="largae" sx={{ color:"#E84A27", fontSize:"40px" }}> 
@@ -136,7 +137,7 @@ export default function Navbar(){
 
                 <Box sx={{flexGrow:1}}/>
                 <IconButton aria-label="search" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
-                onClick = {() => {if(location.pathname !== '/map') navigate('/map')}}
+                onClick = {() => {if(location.pathname !== '/navigation') navigate('/navigation')}}
                 > 
                     <SearchIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
