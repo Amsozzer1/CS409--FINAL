@@ -72,8 +72,7 @@ const Map = (props) => {
     setDest(selectedLocation);
     DESTINATION = selectedLocation
   }
-  console.log(selectedLocation);
-  console.log(dest);
+ 
 
   return (
     // <div style={{ height: '89vh', width: '100%', position: 'relative', zIndex: 1 }}>

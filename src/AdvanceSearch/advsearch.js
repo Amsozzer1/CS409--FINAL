@@ -52,26 +52,71 @@ export var ROUTE = '';
 
 export var BUS = '';
 
+const TripDetails = ({ tripData }) => {
+    if (!tripData&&Array.isArray(tripData) ) {
+        console.error('Invalid trip data: ', tripData);
+        return <p>Loading or invalid data...</p>;
+      }
+    
+    return (
+      <Box
+        sx={{
+          border: '1px solid #ccc',
+          borderRadius: '5px',
+          padding: '10px',
+          margin: '10px',
+        }}
+      >
+        <h2>Trip Details</h2>
+        <p>Start Time: {tripData.start_time}</p>
+        <p>End Time: {tripData.end_time}</p>
+        <p>Travel Time: {tripData.travel_time} minutes</p>
+  
+        <h3>Legs:</h3>
+        <ul>
+        {Array.isArray(tripData)?
+        (
+            tripData.map((leg, index) => (
+                <li key={index}>
+                <p>Leg {index + 1}</p>
+                <p>Mode: {leg.type}</p>
+                
+                </li>
+            ))
 
+
+        ):(null)
+        
+        }
+        </ul>
+      </Box>
+    );
+  };
 
 export default function AdvSearch(props){
     const sendData = (mes)=>{
         props.parentCallback(mes);
     };
-
+    
 // <<<<<<< wangzhe
     
 
     const [open, setOpen] = useState(false);
-    // const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
-    // const [directionResponse, setDirectionResponse] = useState(null);
-    // const [distance, setDistance] = useState(0);
-    // const [duration, setDuration] = useState(0);
-    // const [long, setLong] = useState(-88.22884);
-    // const [lat, setLat] = useState(40.11644);
+    const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
+    const [directionResponse, setDirectionResponse] = useState(null);
+    const [distance, setDistance] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [long, setLong] = useState(-88.22884);
+    const [lat, setLat] = useState(40.11644);
+    const [selectedValue, setSelectedValue] = useState('');
+    const [selectedTime, setSelectedTime] = React.useState(null);
+    const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
+
+    const [data, setData] = useState([]);
+   
+    const [trips, setTrips] = useState([]);
     
 
-    // const [data, setData] = useState([]);
    
 
     const [origin, setOrigin] = useState({lat: 40.12233, lon: -88.29619});
@@ -90,12 +135,47 @@ export default function AdvSearch(props){
     const [vehicles, setVehicles] = useState([]);
 
     
+    const {user} = useUser();
+    const events = user.getEvents();
+    const handleChange = (event) => {
+        setSelectedValue(event.target.value);
+    }
+
+    const addDestination = () => {
+        setDestinations([...destinations, { id: uuidv4(), name: '' }]);
+    };
+
+    const removeDestination = (id) => {
+        setDestinations(destinations.filter(dest => dest.id !== id));
+      };
+
+    const handleDestinationChange = (id, newValue) => {
+        const newDestinations = destinations.map(dest => {
+          if (dest.id === id) {
+            return { ...dest, name: newValue };
+          }
+          return dest;
+        });
+        setDestinations(newDestinations);
+      };
+      useEffect(() => {
+        // Code for geolocation
+        navigator.geolocation.getCurrentPosition((position) => {
+          setLong(position.coords.longitude);
+          setLat(position.coords.latitude);
+        });
+      }, []);  
 
     // setOrigin({lat: 40.12233, lon: -88.29619})
     // setDestination({lat: 40.11626, lon: -88.25783});
 
-    console.log(origin);
-    console.log(destination);
+    // console.log(origin);
+    // console.log(destination);
+    // // setOrigin({lat: 40.12233, lon: -88.29619})
+    // // setDestination({lat: 40.11626, lon: -88.25783});
+
+    // console.log(origin);
+    // console.log(destination);
 
     // const [originStop, setOriginStop] = useState(null);
     // const [destStop, setDestStop] = useState(null);
@@ -116,9 +196,9 @@ export default function AdvSearch(props){
             // const endTime = currItinerary.end_time;
             // const travelTime = currItinerary.travel_time;
 
-            const trips = currItinerary.legs;
+            setTrips(currItinerary.legs);
 
-            // console.log(trips);
+            console.log(trips);
 
             let walkTrips = []
             let busTrips = [];
@@ -132,71 +212,17 @@ export default function AdvSearch(props){
                         busTrips.push(trip)
                     }
                 }
-// =======
-//     const [open, setOpen] = React.useState(false);
-//     const [center, setCenter] = React.useState({ lat: 40.110558, lng: -88.228333 });
-//     const [directionResponse, setDirectionResponse] = React.useState(null);
-//     const [distance, setDistance] = React.useState(0);
-//     const [duration, setDuration] = React.useState(0);
-//     const [long, setLong] = React.useState(0);
-//     const [lat, setLat] = React.useState(0);
-//     const [destination, setDestination] = React.useState('');
-//     const [selectedValue, setSelectedValue] = useState('');
-//     const [selectedTime, setSelectedTime] = React.useState(null);
-//     const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
 
-//     const {user} = useUser();
-//     const events = user.getEvents();
-//     const handleChange = (event) => {
-//         setSelectedValue(event.target.value);
-//     }
-
-
-//     const addDestination = () => {
-//         setDestinations([...destinations, { id: uuidv4(), name: '' }]);
-//     };
-
-//     const removeDestination = (id) => {
-//         setDestinations(destinations.filter(dest => dest.id !== id));
-//       };
-
-//     const handleDestinationChange = (id, newValue) => {
-//         const newDestinations = destinations.map(dest => {
-//           if (dest.id === id) {
-//             return { ...dest, name: newValue };
-//           }
-//           return dest;
-//         });
-//         setDestinations(newDestinations);
-//       };
-//     navigator.geolocation.getCurrentPosition(function(position) {
-//     //console.log(position.coords.longitude);
-//     setLong(position.coords.longitude);
-//     setLat(position.coords.latitude);
-//     });    
-
-//     async function calculateRoute()
-//     {
-//         if(destination !== ''|| (lat !== 0 && long !== 0))
-//         {
-//            console.log("HERE "+destination);
-//            console.log("HERE "+lat);
-//            console.log("HERE "+long);
-//            const directionsService = new google.maps.DirectionsService();
-//            const results = await directionsService.route({
-//             origin: { lat: lat, lng: long },
-//             destination: destination,
-//             travelMode: google.maps.TravelMode.DRIVING,
-            
-// >>>>>>> main
             }
 
-            setItinerary(data.itineraries[0]);
+            setTimeout(() => {
+                setItinerary(data.itineraries[0]);
             setWalkTrip(walkTrips);
             setBusTrip(busTrips);
             
-            // console.log(walkTrip);
-            // console.log(busTrip);
+            console.log(walkTrip);
+            console.log(busTrip);
+            }, 1000);
 
 
           } catch (error) {
@@ -204,8 +230,11 @@ export default function AdvSearch(props){
           }
     }
 
-    function getBusInfo() {
-        let busInfo = [];
+    async function getBusInfo() {
+        //await getPlannedTrip();
+        
+        setTimeout(() => {
+            let busInfo = [];
         for (let i = 0; i < busTrip.length; ++i) {
             let bus = {};
             let service = busTrip[i].services[0]
@@ -216,10 +245,10 @@ export default function AdvSearch(props){
 
             busInfo.push(bus);
         }
+            setBusTripInfo(busInfo);
 
-        setBusTripInfo(busInfo);
-
-        console.log(busTripInfo);
+            console.log(busTripInfo);}, 10000);                    
+        
     }
 
     async function getVehicle() {
@@ -266,12 +295,19 @@ export default function AdvSearch(props){
       }
 
 
+      const handlePlaceSelect = (place) => {
+        setSelectedLocation({
+          lat: place.geometry.location.lat(),
+          lng: place.geometry.location.lng(),
+        });
+      };
+    async function handleSearch() {
+        setDestination({lat: destinations[0].lat, lon: destinations[0].lon});
+        var place = destination;
+        console.log(place);
+        await getPlannedTrip();
 
-    function handleSearch() {
-        getPlannedTrip();
-
-        getBusInfo();
-
+        await getBusInfo();
         if (busTripInfo.length > 0) {
             setCurrRoute(busTripInfo[0].route);
         }
@@ -283,6 +319,8 @@ export default function AdvSearch(props){
 
 
         console.log(itinerary);
+        return(<TripDetails tripData ={trips}></TripDetails>);
+        
     }
 
     return (
@@ -540,8 +578,14 @@ export default function AdvSearch(props){
                     }}
                     ></Input>
                 </Autocomplete>
+                
                     <Button
                     onClick={handleSearch}
+                    onChange={(event)=>{
+                        console.log(event.target.value);
+                        setDestination(event.target.value);
+                    }
+                    }
                     >
                     <Search
                     sx={{
@@ -555,9 +599,16 @@ export default function AdvSearch(props){
                 
             </Box>
             }
+            {
+                trips &&
+                
+                
+                (<TripDetails tripData ={trips}></TripDetails>)
+            }
             
-            {/* <Results data={data}></Results> */}
             
+            
+
             
         </Box>
         // </div>
