@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {useLoadScript } from '@react-google-maps/api';
-import AdvSearch from '../AdvanceSearch/AdvSearch';
+import AdvSearch from '../AdvanceSearch/advsearch.js';
 import Map from '../Map/Map';
 
 import Navbar from '../Navbar/Navbar';

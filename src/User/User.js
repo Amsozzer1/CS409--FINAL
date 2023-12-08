@@ -46,10 +46,9 @@ const UserProvider = ({ children }) => {
         const updatedUser = new User();
         updatedUser.setId(user.getId());
         updatedUser.setEvents(user.getEvents());
-        updatedUser.addEvent(newEvent);
-        sessionStorage.setItem(user.getId(), JSON.stringify(updatedUser.getEvents()));
+        const hasEvents = user.getEvents().length > 0;
         fetch(`${backendURL}/events/${user.getId()}`, {
-            method: 'PUT',
+            method: (hasEvents ? 'PUT' : 'POST'),
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -59,6 +58,8 @@ const UserProvider = ({ children }) => {
         }).catch(error => {
             console.error('Fetch error:', error);
         });
+        updatedUser.addEvent(newEvent);
+        sessionStorage.setItem(user.getId(), JSON.stringify(updatedUser.getEvents()));
         setUser(updatedUser);
     };
 
