@@ -74,9 +74,10 @@ const EventCalendar = (props) => {
         });
 
         const updatedEvents = [...user.getEvents(), ...allEvents];
-        const dataToSend = JSON.stringify({ events: updatedEvents });
+        const hasEvents = user.getEvents().length > 0;
+        const dataToSend = JSON.stringify({ events: (hasEvents ? allEvents : updatedEvents) });
         fetch(`${backendURL}/events/${user.getId()}`, {
-            method: 'POST',
+            method: (hasEvents ? 'PUT' : 'POST'),
             headers: {
                 'Content-Type': 'application/json'
             },

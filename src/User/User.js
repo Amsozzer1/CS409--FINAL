@@ -46,31 +46,18 @@ const UserProvider = ({ children }) => {
         const updatedUser = new User();
         updatedUser.setId(user.getId());
         updatedUser.setEvents(user.getEvents());
-        if (user.getEvents().length === 0) {
-            fetch(`${backendURL}/events/${user.getId()}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({events: [newEvent]})
-            }).then(response => {
-                console.log(response);
-            }).catch(error => {
-                console.error('Fetch error:', error);
-            });
-        } else {
-            fetch(`${backendURL}/events/${user.getId()}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({events: [newEvent]})
-            }).then(response => {
-                console.log(response);
-            }).catch(error => {
-                console.error('Fetch error:', error);
-            });
-        }
+        const hasEvents = user.getEvents().length > 0;
+        fetch(`${backendURL}/events/${user.getId()}`, {
+            method: (hasEvents ? 'PUT' : 'POST'),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({events: [newEvent]})
+        }).then(response => {
+            console.log(response);
+        }).catch(error => {
+            console.error('Fetch error:', error);
+        });
         updatedUser.addEvent(newEvent);
         sessionStorage.setItem(user.getId(), JSON.stringify(updatedUser.getEvents()));
         setUser(updatedUser);
