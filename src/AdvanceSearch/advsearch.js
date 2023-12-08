@@ -183,9 +183,9 @@ export default function AdvSearch(props){
             walkResult.push(results);
         }
 
-        console.log(walkResult);
+        // console.log(walkResult);
 
-        setWalkTripInfo(walkInfo);
+        setWalkTripInfo(walkResult);
         console.log(walkTripInfo);
     }
 
