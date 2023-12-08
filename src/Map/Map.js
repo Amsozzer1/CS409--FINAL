@@ -1,7 +1,10 @@
 import React from 'react';
 import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
 import { useState, useEffect, useRef } from 'react';
+//<<<<<<< wangzhe-handleConflict
+import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
 import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
+//>>>>>>> main
 import Navbar from '../Navbar/Navbar';
 
 const libraries = ['places'];
