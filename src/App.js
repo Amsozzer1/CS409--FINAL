@@ -20,7 +20,7 @@ function App() {
       id: "root",
 
       path: "/",
-      Component: Navigation,
+      Component: Login,
     },
     {
       path: "/login",

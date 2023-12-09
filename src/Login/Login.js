@@ -49,7 +49,7 @@ export default function Login(){
     
     function HomePage(){
       console.log( "navigate to home page");
-      navigate( '../' );
+      navigate( '/navigation' );
     }
 
     function handleLogin() {

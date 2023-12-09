@@ -54,8 +54,8 @@ export var BUS = '';
 
 const TripDetails = ({ tripData }) => {
     if (!tripData || !Array.isArray(tripData) || tripData.length === 0) {
-      console.error('Invalid or empty trip data: ', tripData);
-      return <p>Loading or invalid data...</p>;
+    //   console.error('Invalid or empty trip data: ', tripData);
+      return null;
     }
   
     ////console.log(tripData);
