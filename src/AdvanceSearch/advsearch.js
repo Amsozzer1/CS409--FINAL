@@ -18,6 +18,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
+import dayjs from 'dayjs';
+
 // import { useState } from 'react';
 import { Select, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -287,6 +289,8 @@ export default function AdvSearch(props){
 
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
+        const newDayjsObject = dayjs(event.target.value.start);
+        setArrivalTime( newDayjsObject );
     }
 
 
@@ -359,8 +363,8 @@ export default function AdvSearch(props){
             console.log( "arrival case" );
 
             const formattedArrivalTime =arrivalTime.format( 'YYYY-MM-DDTHH:mm:ss' );
-            const date = formattedDepartureTime.substring(0,10);
-            const time = formattedDepartureTime.substring(11, 16);
+            const date = formattedArrivalTime.substring(0,10);
+            const time = formattedArrivalTime.substring(11, 16);
             URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&date=${date}&time=${time}&arrive_depart=arrive`;
         }
         else{
@@ -619,7 +623,7 @@ export default function AdvSearch(props){
                         <em>Event in next two days</em>
                     </MenuItem>
                     {upcomingEvents.map( (event, index) => (
-                        <MenuItem key = {index} value = {event.title}>
+                        <MenuItem key = {index} value = {event}>
                             {event.title}
                         </MenuItem>
                     ))}
@@ -667,6 +671,7 @@ export default function AdvSearch(props){
                         }}
                     onChange={(newValue) => {
                     setArrivalTime(newValue);
+                    // console.log( "arrival time = ", newValue );
                     }}
                     renderInput={(params) => (
                     <TextField
@@ -676,7 +681,32 @@ export default function AdvSearch(props){
                     )}
                 />
                 </LocalizationProvider> 
+                <Autocomplete
+                    onPlaceChanged={onPlaceChanged}
+                    onLoad={onLoad}
+                >
+                <Input
+                    type='text'
+                    name='destination'
+                    placeholder='Destination'
+                    sx={{
+                        width: '213.171px',
+                        height: '55.984px',
+                        borderRadius: '5px',
+                        backgroundColor: 'white',
+                        opacity: '0.9',
+                        color: 'black',
+                        verticalAlign: 'middle',
+                        marginTop: '10px',
+                        marginBottom: '10px'
+                    }}
+                    onChange={(event)=>{
 
+                        console.log(event.target.value);
+
+                    }}
+                    ></Input>
+                </Autocomplete>
                 {/* {destinations.map((destination, index) => (
                     <Box key={destination.id} sx={{ display: 'flex', alignItems: 'center' }}>
                     <Autocomplete>

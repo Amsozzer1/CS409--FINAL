@@ -16,7 +16,7 @@ const Map = (props) => {
   
   let data = props.queryResult;
 
-  console.log(data);
+  // console.log(data);
 
   const [long, setLong] = React.useState(0);
   const [lat, setLat] = React.useState(0);
@@ -25,7 +25,14 @@ const Map = (props) => {
 
   const [currentLocation, setCurrentLocation] = React.useState(null);
 
-  
+  const walkRoute = data.walk;
+  const busRoute = data.bus;
+  const vehicle = data.vehicle;
+
+  console.log(data);
+  console.log(walkRoute);
+  console.log(busRoute);
+  console.log(vehicle);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -87,8 +94,8 @@ const Map = (props) => {
         >
           <MarkerF position={currentLocation} />
           {/* <MarkerF position={center} /> */}
-          {ROUTE && (
-            <DirectionsRenderer directions={ROUTE} />
+          {walkRoute && (
+            <DirectionsRenderer directions={walkRoute[0]} />
           )}
             {selectedLocation && (
             <InfoWindow
