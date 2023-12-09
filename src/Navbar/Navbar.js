@@ -191,7 +191,7 @@ export default function Navbar(){
                 </MenuButton>
                 
                 {menuOpen && (
-                  <Menu slots={{ listbox: 'ol' }}
+                  <Menu 
                     style={{
                         backgroundColor: "white",
                         width: '150px',
@@ -201,10 +201,10 @@ export default function Navbar(){
                     }
                   }
                   >
-                    <MenuItem onClick={createHandleMenuClick('Profile')}>Profile</MenuItem>
+                    {/* <MenuItem onClick={createHandleMenuClick('Profile')}>Profile</MenuItem>
                     <MenuItem onClick={createHandleMenuClick('Language settings')}>
                       Language
-                    </MenuItem>
+                    </MenuItem> */}
                     <MenuItem onClick={UserLogin? Logout: Login}>
                       {UserLogin? 'Logout': 'Login'}
                     </MenuItem>

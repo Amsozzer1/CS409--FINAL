@@ -11,7 +11,7 @@ import {useLoadScript,Autocomplete,DirectionsRenderer } from '@react-google-maps
 
 import { useState, useEffect, useRef } from 'react';
 
-// =======
+// =======x`
 // import Results from '../AdvanceSearch/Results.js';
 // import {useLoadScript,Autocomplete } from '@react-google-maps/api';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -20,13 +20,13 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
 // import { useState } from 'react';
 import { Select, MenuItem } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+// import IconButton from '@mui/material/IconButton';
+// import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+// import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 // >>>>>>> main
 import '../index.css';
 import { v4 as uuidv4 } from 'uuid';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
 import '../index.css';
 import { useUser } from '../User/User.js';
 const libraries = ['places'];
@@ -72,32 +72,34 @@ export default function AdvSearch(props){
         return eventStart >= now && eventStart <= twoDaysLater;
     });
 
-    const handleChange = (event) => {
-        setSelectedValue(event.target.value);
-    }
-
     const [selectedValue, setSelectedValue] = useState('');
     const [departureTime, setDepartureTime] = React.useState(null);
     const [arrivalTime, setArrivalTime] = React.useState(null);
     const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
 
-    const addDestination = () => {
-        setDestinations([...destinations, { id: uuidv4(), name: '' }]);
-    };
+    const handleChange = (event) => {
+        // console.log(event.target.value);
+        const EventInfo = event.target.value;
+        setArrivalTime( EventInfo.start );
+    }
 
-    const removeDestination = (id) => {
-        setDestinations(destinations.filter(dest => dest.id !== id));
-        };
+    // const addDestination = () => {
+    //     setDestinations([...destinations, { id: uuidv4(), name: '' }]);
+    // };
 
-    const handleDestinationChange = (id, newValue) => {
-        const newDestinations = destinations.map(dest => {
-            if (dest.id === id) {
-            return { ...dest, name: newValue };
-            }
-            return dest;
-        });
-        setDestinations(newDestinations);
-        };
+    // const removeDestination = (id) => {
+    //     setDestinations(destinations.filter(dest => dest.id !== id));
+    //     };
+
+    // const handleDestinationChange = (id, newValue) => {
+    //     const newDestinations = destinations.map(dest => {
+    //         if (dest.id === id) {
+    //         return { ...dest, name: newValue };
+    //         }
+    //         return dest;
+    //     });
+    //     setDestinations(newDestinations);
+    //     };
 
 
 
@@ -137,12 +139,21 @@ export default function AdvSearch(props){
         if( departureTime != null ){
             console.log( "departure case" );
             const formattedDepartureTime = departureTime.format('YYYY-MM-DDTHH:mm:ss');
-            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&time=${formattedDepartureTime}&arrive_depart=depart`;
+            
+            const date = formattedDepartureTime.substring(0,10);
+            const time = formattedDepartureTime.substring(11,16);
+            // console.log(date);
+            // console.log(time);
+            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&date=${date}&time=${time}&arrive_depart=depart`;
+            // console.log(URL);
         }
         else if( arrivalTime != null ){
             console.log( "arrival case" );
+
             const formattedArrivalTime =arrivalTime.format( 'YYYY-MM-DDTHH:mm:ss' );
-            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&time=${formattedArrivalTime}&arrive_depart=arrive`;
+            const date = formattedDepartureTime.substring(0,10);
+            const time = formattedDepartureTime.substring(11, 16);
+            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&date=${date}&time=${time}&arrive_depart=arrive`;
         }
         else{
             console.log( "normal case" );
@@ -151,8 +162,8 @@ export default function AdvSearch(props){
         try {
             const response = await fetch(URL);
             const data = await response.json();
-            console.log( "response data" );
-            console.log( data );
+            // console.log( "response data" );
+            // console.log( data );
             const currItinerary = data.itineraries[0];
 
 
@@ -302,6 +313,11 @@ export default function AdvSearch(props){
         console.log(itinerary);
     }
 
+    // function handleSelectedEvent(event){
+    //     console.log(event);
+    //     setArrivalTime(event.start);
+    // }
+
     return (
         // <div style={{ position: 'relative', zIndex: 2 }}>
         // <div>
@@ -391,7 +407,7 @@ export default function AdvSearch(props){
                         <em>Event in next two days</em>
                     </MenuItem>
                     {upcomingEvents.map( (event, index) => (
-                        <MenuItem key = {index} value = {event.title}>
+                        <MenuItem key = {index} value = {event}>
                             {event.title}
                         </MenuItem>
                     ))}
@@ -439,6 +455,7 @@ export default function AdvSearch(props){
                         }}
                     onChange={(newValue) => {
                     setArrivalTime(newValue);
+                    console.log(newValue);
                     }}
                     renderInput={(params) => (
                     <TextField
