@@ -6,7 +6,7 @@ import {Input} from '@mui/material';
 import {Search} from '@mui/icons-material';
 // <<<<<<< wangzhe
 import Results from './Results.js';
-import {useLoadScript,Autocomplete,DirectionsRenderer } from '@react-google-maps/api';
+import {useLoadScript,Autocomplete,DirectionsRenderer, GoogleMap, useGoogleMap  } from '@react-google-maps/api';
 // import { DESTINATION } from '../Map/Map.js';
 
 import { useState, useEffect, useRef } from 'react';
@@ -49,8 +49,19 @@ export var ROUTE = '';
     the search query?)
 */
 
+export var WalkRoute = [];
+export var BusRoute = [];
+export var Buses = []
+
 
 export var BUS = '';
+
+
+// export var GetWalkRoute = () => [];
+export function GetWalkRoute() {
+    // Reassign a new object to the exported variable
+    return [];
+  }
 
 const TripDetails = ({ tripData }) => {
     if (!tripData&&Array.isArray(tripData) ) {
@@ -96,10 +107,7 @@ const TripDetails = ({ tripData }) => {
 export default function AdvSearch(props){
     const sendData = (mes)=>{
         props.parentCallback(mes);
-    };
-    
-// <<<<<<< wangzhe
-    
+    };  
 
     const [open, setOpen] = useState(false);
     const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
@@ -115,7 +123,57 @@ export default function AdvSearch(props){
     const [data, setData] = useState([]);
    
     const [trips, setTrips] = useState([]);
+
+
+    const [coordinates, setCoordinates] = useState(null);
+
+    const [selectedPlace, setSelectedPlace] = useState(null);
+    const [searchResult, setSearchResult] = useState(null);
+
+
+    const getCoordinatesFromPlaceId = (placeId) => {
+        const map = new window.google.maps.Map(document.createElement('div'));
+        const placesService = new window.google.maps.places.PlacesService(map);
+
+        placesService.getDetails({ placeId }, (place, status) => {
+            if (status === 'OK') {
+                const { geometry } = place;
+                // console.log(place);
+                // console.log(geometry);
+                const { location } = geometry;
+                const loc = { lat: location.lat(), lng: location.lng() };
+                setTimeout(() => {
+                    setCoordinates(loc);
+                    setDestination({lat: loc.lat, lon: loc.lng});
+                }, 1);
+                // console.log(loc);
+                // console.log(destination);
+            } else {
+                console.error('Error fetching place details:', status);
+            }
+        });
+    };
     
+
+    function onLoad(autocomplete) {
+        // console.log("Enter onLoad");
+        setSearchResult(autocomplete);
+    }
+
+    async function onPlaceChanged() {
+        // console.log("Enter onPlaceChanged");
+        if (searchResult === null) {
+            return;
+        }
+        const place = searchResult.getPlace();
+        // console.log(place);
+        setSelectedPlace(place);
+        getCoordinatesFromPlaceId(place.place_id);
+        // const { lat, lng } = placeDetails.geometry.location;
+        // console.log(`Latitude: ${lat}, Longitude: ${lng}`);
+
+        // console.log(destination);
+    }
 
    
 
@@ -127,6 +185,7 @@ export default function AdvSearch(props){
     const [walkTrip, setWalkTrip] = useState([]);
     const [busTrip, setBusTrip] = useState([]);
 
+    const [walkTripInfo, setWalkTripInfo] = useState([]);
     const [busTripInfo, setBusTripInfo] = useState([]);
 
     const [routeShape, setRouteShape] = useState(null);
@@ -166,39 +225,27 @@ export default function AdvSearch(props){
         });
       }, []);  
 
-    // setOrigin({lat: 40.12233, lon: -88.29619})
-    // setDestination({lat: 40.11626, lon: -88.25783});
-
-    // console.log(origin);
-    // console.log(destination);
-    // // setOrigin({lat: 40.12233, lon: -88.29619})
-    // // setDestination({lat: 40.11626, lon: -88.25783});
-
-    // console.log(origin);
-    // console.log(destination);
-
-    // const [originStop, setOriginStop] = useState(null);
-    // const [destStop, setDestStop] = useState(null);
-
-    // const [stopData, setStopData] = useState([]);
-    // const [closestStop, setClosestStop] = useState(null);
-    // const [markers, setMarkers] = useState([]);
 
     async function getPlannedTrip() {
-        const URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;
+        const URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&date=2023-12-09&time=13:09&arrive_depart=arrive`;
       
         try {
             const response = await fetch(URL);
             const data = await response.json();
             const currItinerary = data.itineraries[0];
 
-            // const startTime = currItinerary.start_time;
-            // const endTime = currItinerary.end_time;
-            // const travelTime = currItinerary.travel_time;
+            // console.log(data);
+            // console.log(currItinerary);
 
-            setTrips(currItinerary.legs);
+            if (currItinerary === undefined || currItinerary === null) {
+                return;
+            }
 
-            console.log(trips);
+            setTimeout(() => {
+                setTrips(currItinerary.legs);
+            }, 1);
+
+            // console.log(trips);
 
             let walkTrips = []
             let busTrips = [];
@@ -217,12 +264,19 @@ export default function AdvSearch(props){
 
             setTimeout(() => {
                 setItinerary(data.itineraries[0]);
-            setWalkTrip(walkTrips);
-            setBusTrip(busTrips);
+            // }, 1);
+
+            // setTimeout(() => {
+                setWalkTrip(walkTrips);
+            // }, 1);
+
+            // setTimeout(() => {
+                setBusTrip(busTrips);
+            }, 1);
+                
+                // console.log(walkTrip);
+                // console.log(busTrip);
             
-            console.log(walkTrip);
-            console.log(busTrip);
-            }, 1000);
 
 
           } catch (error) {
@@ -230,25 +284,57 @@ export default function AdvSearch(props){
           }
     }
 
+    async function getWalkInfo() {
+        // setTimeout(() => {
+            // let walkInfo = [];
+            let walkResult = [];
+            for (let i = 0; i < walkTrip.length; ++i) {
+                let walk = {};
+                walk.origin = walkTrip[i].walk.begin;
+                walk.destnation = walkTrip[i].walk.end;
+
+                // walkInfo.push(walk);
+
+                const directionsService = new google.maps.DirectionsService();
+                const results = directionsService.route({
+                    origin: { lat: walk.origin.lat, lng: walk.origin.lon },
+                    destination: { lat: walk.destnation.lat, lng: walk.destnation.lon },
+                    travelMode: google.maps.TravelMode.WALKING,   
+                });
+
+                walkResult.push(results);
+            }
+
+            // console.log(walkResult);
+            setTimeout(() => {
+                setWalkTripInfo(walkResult);
+            }, 1);  
+            // console.log(walkTripInfo);
+        // }, 10000);   
+    }
+
     async function getBusInfo() {
         //await getPlannedTrip();
         
-        setTimeout(() => {
+        // setTimeout(() => {
             let busInfo = [];
-        for (let i = 0; i < busTrip.length; ++i) {
-            let bus = {};
-            let service = busTrip[i].services[0]
+            for (let i = 0; i < busTrip.length; ++i) {
+                let bus = {};
+                let service = busTrip[i].services[0]
 
-            bus.origin = service.begin.stop_id;
-            bus.destination = service.end.stop_id;
-            bus.route = service.route.route_id;
+                bus.origin = service.begin.stop_id;
+                bus.destination = service.end.stop_id;
+                bus.route = service.route.route_id;
 
-            busInfo.push(bus);
-        }
-            setBusTripInfo(busInfo);
+                busInfo.push(bus);
+            }
 
-            console.log(busTripInfo);}, 10000);                    
-        
+            setTimeout(() => {
+                setBusTripInfo(busInfo);
+            }, 1);    
+
+            // console.log(busTripInfo);
+        // }, 10000);                   
     }
 
     async function getVehicle() {
@@ -263,15 +349,12 @@ export default function AdvSearch(props){
             const currVehicles = data.vehicles;
             
 
-            console.log(currVehicles);
-
-            setVehicles(currVehicles);
-
-            // setItinerary(data.itineraries[0]);
-            // setWalkTrip(walkTrips);
-            // setBusTrip(busTrips);
+            // console.log(currVehicles);
+            setTimeout(() => {
+                setVehicles(currVehicles);
+            }, 1);  
             
-            console.log(vehicles);
+            // console.log(vehicles);
 
 
           } catch (error) {
@@ -284,41 +367,66 @@ export default function AdvSearch(props){
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: 'AIzaSyCG8MUFrbUkfNNxhg-gcs-DM5Rku9pSsHM',
         libraries,
-      });
+    });
     
-      if (loadError) {
+    if (loadError) {
         return <div>Error loading maps</div>;
-      }
+    }
     
-      if (!isLoaded) {
+    if (!isLoaded) {
         return <div>Loading maps</div>;
-      }
+    }
 
 
-      const handlePlaceSelect = (place) => {
-        setSelectedLocation({
-          lat: place.geometry.location.lat(),
-          lng: place.geometry.location.lng(),
-        });
-      };
+    GetWalkRoute = () => walkTripInfo;
+
     async function handleSearch() {
-        setDestination({lat: destinations[0].lat, lon: destinations[0].lon});
-        var place = destination;
-        console.log(place);
+        // setDestination({lat: destinations[0].lat, lon: destinations[0].lon});
+        // var place = destination;
+        // console.log(place);
+        
         await getPlannedTrip();
+
+        // console.log(itinerary);
 
         await getBusInfo();
         if (busTripInfo.length > 0) {
-            setCurrRoute(busTripInfo[0].route);
+            setTimeout(() => {
+                setCurrRoute(busTripInfo[0].route);
+            }, 1);  
         }
+
+        await getWalkInfo();
 
         if (currRoute !== "") {
             getVehicle();
         }
+
         
+        // WalkRoute = [];
+        // WalkRoute = [...WalkRoute, walkTripInfo];
+        // // WalkRoute = walkTripInfo;
+        // BusRoute = busTripInfo;
+        // Buses = vehicles;
 
 
-        console.log(itinerary);
+        // console.log(itinerary);
+
+        // console.log(walkTripInfo);
+        // console.log(busTripInfo);
+        // console.log(vehicles);
+
+        // console.log(WalkRoute);
+        // console.log(BusRoute);
+        // console.log(Buses);
+
+        const routeInfo = {};
+        routeInfo['walk'] = walkTripInfo;
+        routeInfo['bus'] = busTripInfo;
+        routeInfo['vehicle'] = vehicles;
+
+        sendData(routeInfo);
+
         return(<TripDetails tripData ={trips}></TripDetails>);
         
     }
@@ -554,7 +662,19 @@ export default function AdvSearch(props){
                     justifyContent: 'center',
                 }}
                 >
-                <Autocomplete>
+                <Autocomplete
+                    // onLoad={(autocomplete) => {
+                    //     console.log('Autocomplete loaded:', autocomplete);
+                    // }}
+                    // onPlaceSelected={(place)=>{
+                    //     console.log("Enter onPlaceSelected");
+                    //     console.log(place);
+                    //     setSelectedPlace(place);
+                    // }
+                    onPlaceChanged={onPlaceChanged}
+                    onLoad={onLoad}
+                // }
+                >
                 <Input
                     type='text'
                     name='destination'

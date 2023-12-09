@@ -1,7 +1,7 @@
 import React from 'react';
 import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
 import { useState, useEffect, useRef } from 'react';
-import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
+import AdvSearch,{ROUTE, WalkRoute, BusRoute, Buses, GetWalkRoute} from '../AdvanceSearch/advsearch.js';
 import Navbar from '../Navbar/Navbar';
 
 const libraries = ['places'];
@@ -15,12 +15,33 @@ export var DESTINATION = '';
 const Map = (props) => {
   let data = props.queryResult;
 
+  console.log(data);
+
   const [long, setLong] = React.useState(0);
   const [lat, setLat] = React.useState(0);
   
   const [navigate, setNavigate] = React.useState(false);
 
   const [currentLocation, setCurrentLocation] = React.useState(null);
+
+  const [walkRoute, setWalkRoute] = useState(WalkRoute);
+  const [busRoute, setBusRoute] = useState(BusRoute);
+  const [buses, setBuses] = useState(Buses);
+
+
+  // useEffect(() => {
+  //   // setTimeout(() => {
+  //     setWalkRoute(GetWalkRoute());
+  //     setBusRoute(BusRoute);
+  //     setBuses(Buses);
+  // // }, 1);  
+
+  //   console.log(walkRoute);
+  //   console.log(busRoute);
+  //   console.log(buses);
+  // }, [WalkRoute, BusRoute, Buses])
+
+  // console.log(GetWalkRoute());
 
   useEffect(() => {
     if (navigator.geolocation) {
