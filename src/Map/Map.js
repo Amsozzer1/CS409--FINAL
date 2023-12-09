@@ -13,6 +13,7 @@ const mapContainerStyle = {
 export var DESTINATION = '';
 
 const Map = (props) => {
+  
   let data = props.queryResult;
 
   console.log(data);

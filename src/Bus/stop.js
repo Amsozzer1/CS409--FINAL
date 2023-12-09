@@ -28,7 +28,7 @@ export function Stop({ DATA }) {
           const stopMarkers = stops.map(stop => ({
             position: { lat: stop.stop_points[0].stop_lat, lng: stop.stop_points[0].stop_lon },
             icon: {
-              url: stop === closest ? 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' : 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+              url: stop === closest ? 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' : 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
             },
           }));
           setMarkers(stopMarkers);
@@ -37,26 +37,26 @@ export function Stop({ DATA }) {
         console.error('Error fetching stop data: ', error);
       }
     }
-
+    const calculateClosestStop = (stops, lat, lon) => {
+      let closest = stops[0];
+      let minDistance = distance(stops[0].stop_points[0].stop_lat, stops[0].stop_points[0].stop_lon, lat, lon);
+  
+      for (let i = 1; i < stops.length; i++) {
+        const stop = stops[i];
+        const dist = distance(stop.stop_points[0].stop_lat, stop.stop_points[0].stop_lon, lat, lon);
+        if (dist < minDistance) {
+          minDistance = dist;
+          closest = stop;
+        }
+      }
+  
+      return closest;
+    };
     getStopData();
   }, [DATA.lat, DATA.long]);
+
   // Function to calculate closest stop based on coordinates
-  const calculateClosestStop = (stops, lat, lon) => {
-    let closest = stops[0];
-    let minDistance = distance(stops[0].stop_points[0].stop_lat, stops[0].stop_points[0].stop_lon, lat, lon);
-
-    for (let i = 1; i < stops.length; i++) {
-      const stop = stops[i];
-      const dist = distance(stop.stop_points[0].stop_lat, stop.stop_points[0].stop_lon, lat, lon);
-      if (dist < minDistance) {
-        minDistance = dist;
-        closest = stop;
-      }
-    }
-
-    return closest;
-  };
-
+  
 
   // Function to calculate distance between two points (latitude and longitude)
   const distance = (lat1, lon1, lat2, lon2) => {
@@ -77,6 +77,7 @@ export function Stop({ DATA }) {
   return (
     <Box>
       {closestStop && <Bus DATA={closestStop} />}
+      
       <Box
         sx={{
           position: 'absolute',
@@ -85,53 +86,59 @@ export function Stop({ DATA }) {
           zIndex: '1',
         }}
       >
-        <Box
-          sx={{
-            height: 'auto',
-            width: '240px',
-            backgroundColor: '#ABABAB',
-            opacity: '0.7',
-            paddingBottom: '10px',
-          }}
-        >
-          <Button
+        {stopData && stopData.length > 0 && (
+          
+          <>
+          
+          <Box
             sx={{
-              position: 'relative',
-              color: 'black',
-              backgroundColor: '#D9D9D9',
+              height: 'auto',
               width: '240px',
-              height: '30px',
+              backgroundColor: '#ABABAB',
+              opacity: '0.7',
+              paddingBottom: '10px',
             }}
           >
-            <p
-              style={{
+            <Button
+              sx={{
                 position: 'relative',
-                right: '90px',
+                color: 'black',
+                backgroundColor: '#D9D9D9',
+                width: '240px',
+                height: '30px',
               }}
             >
-              Stops
-            </p>
-          </Button>
-          <Button></Button>
+              <p
+                style={{
+                  position: 'relative',
+                  right: '90px',
+                }}
+              >
+                Stops
+              </p>
+            </Button>
+            <Button></Button>
 
-          <ul
-            style={{
-              listStyleType: 'none',
-              display: 'grid',
-              gap: '10px',
-            }}
-          >
-            {stopData.map((stop, key) => (
-              <li key={key}>{stop.stop_name}</li>
-            ))}
-          </ul>
-        </Box>
+            <ul
+              style={{
+                listStyleType: 'none',
+                display: 'grid',
+                gap: '10px',
+              }}
+            >
+              {stopData.map((stop, key) => (
+                <li key={key}>{stop.stop_name}</li>
+              ))}
+            </ul>
+          </Box>
+          
+          </>
+        )}
       </Box>
 
       {/* Render markers for each bus stop */}
       {markers.map((marker, index) => (
         <Marker key={index} {...marker} />
-
       ))}
     </Box>
   );

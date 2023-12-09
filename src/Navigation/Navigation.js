@@ -4,6 +4,7 @@ import AdvSearch from '../AdvanceSearch/advsearch.js';
 import Map from '../Map/Map';
 
 import Navbar from '../Navbar/Navbar';
+import { Height } from '@mui/icons-material';
 
 const libraries = ['places'];
 const Navigation = () => {
@@ -27,9 +28,8 @@ const Navigation = () => {
   }
 
   return (
-    <div>
+    <div >
         <Navbar />
-        
         <Map queryResult={result} />
         <AdvSearch parentCallback={callbackFunction} />
     </div>
