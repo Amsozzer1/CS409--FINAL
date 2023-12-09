@@ -71,7 +71,7 @@ const BusStop = () => {
           zoom={zoom}
           center={center}
           onClick={handleOnClick}
-        //   onScroll={()=>{setZoom(16)}}
+          //onScroll={()=>{setZoom(16)}}
           options={{
             fullscreenControl: false,
             streetViewControl: false,

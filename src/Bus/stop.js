@@ -85,6 +85,7 @@ export function Stop({ DATA }) {
           zIndex: '1',
         }}
       >
+        {DATA && Array.isArray(stopData) && stopData.length > 0 ? (
         <Box
           sx={{
             height: 'auto',
@@ -129,6 +130,7 @@ export function Stop({ DATA }) {
             ))}
           </ul>
         </Box>
+        ):null}
       </Box>
 
       {/* Render markers for each bus stop */}
