@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import {useLoadScript } from '@react-google-maps/api';
 //<<<<<<< wangzhe-handleConflict
 import AdvSearch from '../AdvanceSearch/advsearch';
+// <<<<<<< heh
+// //=======
 // =======
+// // =======
+// >>>>>>> main
 // import AdvSearch from '../AdvanceSearch/advsearch.js';
 //>>>>>>> main
 import Map from '../Map/Map';
