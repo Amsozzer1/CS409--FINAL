@@ -1,14 +1,19 @@
 import React from 'react';
 import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
 import { useState, useEffect, useRef } from 'react';
-//<<<<<<< wangzhe-handleConflict
-import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
-// <<<<<<< heh
-// //import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
+import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
+// <<<<<<< wangzhe_new
+// import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
 // =======
-// // import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
+// //<<<<<<< wangzhe-handleConflict
+// import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
+// // <<<<<<< heh
+// // //import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
+// // =======
+// // // import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
+// // >>>>>>> main
+// //>>>>>>> main
 // >>>>>>> main
-//>>>>>>> main
 import Navbar from '../Navbar/Navbar';
 
 const libraries = ['places'];
@@ -20,7 +25,10 @@ const mapContainerStyle = {
 export var DESTINATION = '';
 
 const Map = (props) => {
+  
   let data = props.queryResult;
+
+  console.log(data);
 
   const [long, setLong] = React.useState(0);
   const [lat, setLat] = React.useState(0);
@@ -28,6 +36,8 @@ const Map = (props) => {
   const [navigate, setNavigate] = React.useState(false);
 
   const [currentLocation, setCurrentLocation] = React.useState(null);
+
+  
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -50,13 +60,7 @@ const Map = (props) => {
 
       
   const [center, setCenter] = useState({ lat:  40.145714753336584, lng:-87.9655735301962 });
-  // setCenter(currentLocation);
-  // navigator.geolocation.getCurrentPosition(function(position) {
-  //   //console.log(position.coords.longitude);
-  //   setLong(position.coords.longitude);
-  //   setLat(position.coords.latitude);
-  //   setCenter({ lat: lat, lng:long });
-  // });
+
   const [zoom, setZoom] = useState(16);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [dest, setDest] = useState(null);
@@ -65,8 +69,6 @@ const Map = (props) => {
     const clickedLat = event.latLng.lat();
     const clickedLng = event.latLng.lng();
 
-    // console.log(`Clicked on: Lat ${clickedLat}, Lng ${clickedLng}`);
-    // setCenter({ lat:clickedLat, lng:clickedLng });
     setSelectedLocation({ lat:clickedLat, lng:clickedLng });
 
   }
@@ -79,8 +81,7 @@ const Map = (props) => {
     setDest(selectedLocation);
     DESTINATION = selectedLocation
   }
-  console.log(selectedLocation);
-  console.log(dest);
+ 
 
   return (
     // <div style={{ height: '89vh', width: '100%', position: 'relative', zIndex: 1 }}>
@@ -124,7 +125,6 @@ const Map = (props) => {
 };
 
 export default Map;
-
 
 
 
