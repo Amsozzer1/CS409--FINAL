@@ -40,6 +40,7 @@ export default function Results({ data }) {
 
 
   return (
+    // <div style={{ position: 'relative', zIndex: 2 }}>
     <Box>
       {
         data.length>0?
@@ -104,6 +105,6 @@ export default function Results({ data }) {
           </Box>):null
       }
     </Box>
-    
+    // </div>
   );
 }

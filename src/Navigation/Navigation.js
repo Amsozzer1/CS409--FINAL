@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import {useLoadScript } from '@react-google-maps/api';
+//<<<<<<< wangzhe-handleConflict
 import AdvSearch from '../AdvanceSearch/advsearch';
+// =======
+// import AdvSearch from '../AdvanceSearch/advsearch.js';
+//>>>>>>> main
 import Map from '../Map/Map';
 
 import Navbar from '../Navbar/Navbar';
@@ -29,8 +33,9 @@ const Navigation = () => {
   return (
     <div>
         <Navbar />
-        <AdvSearch parentCallback={callbackFunction} />
+        
         <Map queryResult={result} />
+        <AdvSearch parentCallback={callbackFunction} />
     </div>
   );
 };
