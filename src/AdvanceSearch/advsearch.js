@@ -308,18 +308,18 @@ export default function AdvSearch(props){
         <Box
         sx={{
             position: 'absolute',
-            top: '15vh',
-            left: '2.5vh',
+            top: '150px',
+            left: '20px',
+            zIndex: '2'
         }}
         >
             
             {open? 
             <Box
             sx={{
-
-                height: 'fit-content',
-                width: '240px',
+                width: '265px',
                 backgroundColor: '#ABABAB',
+                borderRadius: '5px',
                 opacity: '0.9',
                 paddingBottom: '10px'
             }}
@@ -494,13 +494,10 @@ export default function AdvSearch(props){
             : //else
             <Box
             sx={{
-
-                height: '150px',
-                width: '240px',
+                width: '265px',
                 backgroundColor: '#ABABAB',
+                borderRadius: '5px',
                 opacity: '0.9',
-                
-                
             }}
             >
                 <Button
@@ -539,14 +536,12 @@ export default function AdvSearch(props){
                     name='destination'
                     placeholder='Destination'
                     sx={{
-                        width: '200px',
-                        height: '30px',
+                        width: '213.171px',
+                        height: '55.984px',
                         borderRadius: '5px',
                         backgroundColor: 'white',
                         opacity: '0.9',
                         color: 'black',
-                        marginLeft: '30px',
-                        marginTop: '20px',
                         verticalAlign: 'middle',
                         marginTop: '10px',
                         marginBottom: '10px'
