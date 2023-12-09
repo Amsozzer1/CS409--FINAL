@@ -547,10 +547,10 @@ export default function AdvSearch(props){
                 </Typography>
                 </Box> */}
                 </Box>
-// <<<<<<< Jenny_adv_event
+{/* // <<<<<<< Jenny_adv_event
 // =======
 //                 </Box>
-// >>>>>>> main
+// >>>>>>> main */}
 
             </Box>
             : //else
@@ -654,5 +654,5 @@ export default function AdvSearch(props){
 // <<<<<<< Jenny_adv_event
 };
 // =======
-};
+
 // >>>>>>> main

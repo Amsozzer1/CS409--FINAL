@@ -3,7 +3,7 @@ import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow 
 import { useState, useEffect, useRef } from 'react';
 //<<<<<<< wangzhe-handleConflict
 import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
-import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
+//import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
 //>>>>>>> main
 import Navbar from '../Navbar/Navbar';
 
