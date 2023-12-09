@@ -63,12 +63,29 @@ export default function AdvSearch(props){
 
     const {user} = useUser();
     const events = user.getEvents();
+// <<<<<<< Jenny_adv_event
+    // console.log( events );
+    const now = new Date();
+    const twoDaysLater = new Date( now.getTime() + ( 2*24*60*60*1000 ) );
+
+    const upcomingEvents = events.filter( event => {
+        const eventStart = new Date( event.start );
+        return eventStart >= now && eventStart <= twoDaysLater;
+    });
+
+// =======
+// >>>>>>> main
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
     }
 
     const [selectedValue, setSelectedValue] = useState('');
+// <<<<<<< Jenny_adv_event
+    const [departureTime, setDepartureTime] = React.useState(null);
+    const [arrivalTime, setArrivalTime] = React.useState(null);
+// =======
     const [selectedTime, setSelectedTime] = React.useState(null);
+// >>>>>>> main
     const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
 
     const addDestination = () => {
@@ -123,18 +140,44 @@ export default function AdvSearch(props){
 
 
     async function getPlannedTrip() {
-        const URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;
-      
+// <<<<<<< Jenny_adv_event
+        let URL = ``;
+        if( departureTime != null ){
+            console.log( "departure case" );
+            const formattedDepartureTime = departureTime.format('YYYY-MM-DDTHH:mm:ss');
+            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&time=${formattedDepartureTime}&arrive_depart=depart`;
+        }
+        else if( arrivalTime != null ){
+            console.log( "arrival case" );
+            const formattedArrivalTime =arrivalTime.format( 'YYYY-MM-DDTHH:mm:ss' );
+            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&time=${formattedArrivalTime}&arrive_depart=arrive`;
+        }
+        else{
+            console.log( "normal case" );
+            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;  
+        }
         try {
             const response = await fetch(URL);
             const data = await response.json();
+            console.log( "response data" );
+            console.log( data );
+// =======
+//         const URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;
+      
+//         try {
+//             const response = await fetch(URL);
+//             const data = await response.json();
+// >>>>>>> main
             const currItinerary = data.itineraries[0];
 
 
             const trips = currItinerary.legs;
 
+// <<<<<<< Jenny_adv_event
+// =======
             // console.log(trips);
 
+// >>>>>>> main
             let walkTrips = []
             let busTrips = [];
             if (trips !== null) {
@@ -153,10 +196,13 @@ export default function AdvSearch(props){
             setItinerary(data.itineraries[0]);
             setWalkTrip(walkTrips);
             setBusTrip(busTrips);
+// <<<<<<< Jenny_adv_event
+// =======
             
-            console.log(walkTrip);
+//             console.log(walkTrip);
             // console.log(busTrip);
 
+// >>>>>>> main
 
           } catch (error) {
             console.error('Error fetching stop data: ', error);
@@ -186,6 +232,10 @@ export default function AdvSearch(props){
         // console.log(walkResult);
 
         setWalkTripInfo(walkResult);
+// <<<<<<< Jenny_adv_event
+//         console.log( "walk trip info" )
+// =======
+// >>>>>>> main
         console.log(walkTripInfo);
     }
 
@@ -217,8 +267,11 @@ export default function AdvSearch(props){
         }
 
         setBusTripInfo(busInfo);
+// <<<<<<< Jenny_adv_event
+// =======
 
         // console.log(busTripInfo);
+// >>>>>>> main
     }
 
     async function getVehicles() {
@@ -241,6 +294,13 @@ export default function AdvSearch(props){
         } catch (error) {
             console.error('Error fetching stop data: ', error);
         }
+// <<<<<<< Jenny_adv_event
+
+
+        // console.log( " vehicles trip info" );
+        // console.log( vehiclestrip)
+// =======
+// >>>>>>> main
     }
 
 
@@ -299,6 +359,7 @@ export default function AdvSearch(props){
                 width: '240px',
                 backgroundColor: '#ABABAB',
                 opacity: '0.9',
+                paddingBottom: '10px'
             }}
             >
                 <Button
@@ -328,7 +389,7 @@ export default function AdvSearch(props){
                     
                     <p>AdvanceSearch</p>
                 </Button>
-                <Button>
+                <Button onClick={handleSearch}>
                 <Search
                     sx={{
                     color: '#E84A27',
@@ -367,9 +428,9 @@ export default function AdvSearch(props){
                     <MenuItem value="">
                         <em>Event in next two days</em>
                     </MenuItem>
-                    {events.map( (event, index) => (
-                        <MenuItem key = {index} value = {EventSource.name}>
-                            {EventSource.name}
+                    {upcomingEvents.map( (event, index) => (
+                        <MenuItem key = {index} value = {event.title}>
+                            {event.title}
                         </MenuItem>
                     ))}
                 </Select>
@@ -377,7 +438,7 @@ export default function AdvSearch(props){
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
                     label="Departure Time"
-                    value={selectedTime}
+                    value={departureTime}
                     sx={{
                         width: '213.171px',
                         height: '55.984px',
@@ -389,7 +450,7 @@ export default function AdvSearch(props){
                         marginTop: '10px'
                         }}
                     onChange={(newValue) => {
-                    setSelectedTime(newValue);
+                    setDepartureTime(newValue);
                     }}
                     renderInput={(params) => (
                     <TextField
@@ -403,7 +464,7 @@ export default function AdvSearch(props){
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <TimePicker
                     label="Arrival Time"
-                    value={selectedTime}
+                    value={arrivalTime}
                     sx={{
                         width: '213.171px',
                         height: '55.984px',
@@ -412,10 +473,10 @@ export default function AdvSearch(props){
                         opacity: '0.9',
                         color: 'black',
                         verticalAlign: 'middle',
-                        marginTop: '10px'
+                        marginTop: '10px',
                         }}
                     onChange={(newValue) => {
-                    setSelectedTime(newValue);
+                    setArrivalTime(newValue);
                     }}
                     renderInput={(params) => (
                     <TextField
@@ -426,26 +487,46 @@ export default function AdvSearch(props){
                 />
                 </LocalizationProvider> 
 
-                {destinations.map((destination, index) => (
+                {/* {destinations.map((destination, index) => (
                     <Box key={destination.id} sx={{ display: 'flex', alignItems: 'center' }}>
                     <Autocomplete>
-                    <TextField
-                    key={destination.id}
-                    value={destination.name}
-                    onChange={(e) => handleDestinationChange(destination.id, e.target.value)}
-                    label={`Add stop ${index + 1}`}
-                    variant="outlined"
-                    sx={{
-                        width: '213.171px',
-                        height: '55.984px',
-                        borderRadius: '5px',
-                        backgroundColor: 'white',
-                        opacity: '0.9',
-                        color: 'black',
-                        verticalAlign: 'middle',
-                        marginTop: '10px',  
-                        }}
-                    />
+// <<<<<<< Jenny_adv_event
+//                         <TextField
+//                         key={destination.id}
+//                         value={destination.name}
+//                         onChange={(e) => handleDestinationChange(destination.id, e.target.value)}
+//                         label={`Add stop ${index + 1}`}
+//                         variant="outlined"
+//                         sx={{
+//                             width: '213.171px',
+//                             height: '55.984px',
+//                             borderRadius: '5px',
+//                             backgroundColor: 'white',
+//                             opacity: '0.9',
+//                             color: 'black',
+//                             verticalAlign: 'middle',
+//                             marginTop: '10px',  
+//                             }}
+//                         />
+// =======
+//                     <TextField
+//                     key={destination.id}
+//                     value={destination.name}
+//                     onChange={(e) => handleDestinationChange(destination.id, e.target.value)}
+//                     label={`Add stop ${index + 1}`}
+//                     variant="outlined"
+//                     sx={{
+//                         width: '213.171px',
+//                         height: '55.984px',
+//                         borderRadius: '5px',
+//                         backgroundColor: 'white',
+//                         opacity: '0.9',
+//                         color: 'black',
+//                         verticalAlign: 'middle',
+//                         marginTop: '10px',  
+//                         }}
+//                     />
+// >>>>>>> main
                     </Autocomplete>
                     <IconButton onClick={() => removeDestination(destination.id)} color="error" aria-label="remove stop">
                         <RemoveCircleOutlineIcon />
@@ -464,8 +545,12 @@ export default function AdvSearch(props){
                 <Typography variant="body1">
                     add stop
                 </Typography>
+                </Box> */}
                 </Box>
-                </Box>
+// <<<<<<< Jenny_adv_event
+// =======
+//                 </Box>
+// >>>>>>> main
 
             </Box>
             : //else
@@ -507,8 +592,12 @@ export default function AdvSearch(props){
                 sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+// <<<<<<< Jenny_adv_event
+                    marginLeft: '10px'
+// =======
+//                     alignItems: 'center',
+//                     justifyContent: 'center',
+// >>>>>>> main
                 }}
                 >
                 <Autocomplete>
@@ -526,7 +615,12 @@ export default function AdvSearch(props){
                         marginLeft: '30px',
                         marginTop: '20px',
                         verticalAlign: 'middle',
+// <<<<<<< Jenny_adv_event
+                        marginTop: '10px',
+                        marginBottom: '10px'
+// =======
 
+// >>>>>>> main
                     }}
                     onChange={(event)=>{
 
@@ -557,4 +651,8 @@ export default function AdvSearch(props){
         </Box>
         // </div>
     );
+// <<<<<<< Jenny_adv_event
 };
+// =======
+};
+// >>>>>>> main

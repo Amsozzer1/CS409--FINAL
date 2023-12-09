@@ -23,6 +23,10 @@ function App() {
       Component: Navigation,
     },
     {
+      path: "/login",
+      Component: Login,
+    },
+    {
       path: "/register",
       Component: Register,
     },

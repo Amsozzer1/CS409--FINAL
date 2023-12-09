@@ -51,7 +51,6 @@ export default function Results({ data }) {
                   top: '10px',
                   left: '0px',
                   zIndex: '2',
-              
               }
           }
           >

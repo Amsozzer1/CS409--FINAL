@@ -20,13 +20,20 @@ import { useNavigate,useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useUser } from '../User/User.js';
 import { backendURL } from '../Backend/Backend.js';
+import zIndex from '@mui/material/styles/zIndex.js';
 const auth = getAuth(app);
 // const user = auth.currentUser;
 export default function Navbar(){
     const { handleSetEvents } = useUser();
     const [img,setImg] = React.useState('');
+    const [menuOpen, setMenuOpen] = React.useState(false);
+    const [UserLogin, setUserLogin] = React.useState(false);
     const navigate = useNavigate();
     const location = useLocation();
+
+    const toggleMenu = () => {
+      setMenuOpen( !menuOpen );
+    }
     const createHandleMenuClick = (menuItem) => {
         return () => {
           console.log(`Clicked on ${menuItem}`);
@@ -39,6 +46,7 @@ export default function Navbar(){
               // https://firebase.google.com/docs/reference/js/auth.user
               setImg(currUser.photoURL);
               loadEvents(currUser.uid);
+              setUserLogin(true);
               // console.log(currUser.photoURL);
               // ...
             } else {
@@ -46,6 +54,7 @@ export default function Navbar(){
               // ...
               setImg('');
               handleSetEvents('', []);
+              setUserLogin(false);
             }
           });
         return unsubscribe;
@@ -110,6 +119,12 @@ export default function Navbar(){
         });
         navigate('/');
       }
+      function Login(){
+        navigate('/login');
+      }
+      function handleHome(){
+        navigate('/');
+      }
     return (
       <div>
         <AppBar position="static" sx={{bgcolor:"#13294B", height:"80px"}}>
@@ -131,6 +146,7 @@ export default function Navbar(){
                         textDecoration: 'none',
                         lineHeight: "80px"
                     }}
+                    onClick={handleHome}
                 >
                     UIUC BusNav
                 </Typography>
@@ -153,47 +169,47 @@ export default function Navbar(){
                 </IconButton>
                     
                 <Dropdown>
-                
                 <MenuButton
-                style={{
-                    backgroundColor: "transparent",
-                    border: "none",
-                    borderRadius: "50%",
-                    cursor: "pointer",
-                }}
-                >
-                    
+                  style={{
+                      backgroundColor: "transparent",
+                      border: "none",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                  }}
+                  onClick={toggleMenu}
+                > 
                     {
                         img ?
                         <img src={img} alt="profile" width="50px" height="50px" style={{borderRadius:"50%",}}/>
                         : 
                         (<AccountCircleIcon style={{
-                        width: "50px",
-                        height: "50px",
-                        
+                        width: "35px",
+                        height: "35px",
+                        color: "#E84A27"
                         }}/>)
                     } 
-                        
                 </MenuButton>
                 
-
-                <Menu slots={{ listbox: 'ol' }}
-
-                style={{
-                    borderBottom: '1px solid black',
-                    borderLeft: '1px solid black',
-                    borderRight: '1px solid black',
-                    
-                }}
-                >
-                  <MenuItem onClick={createHandleMenuClick('Profile')}>Profile</MenuItem>
-                  <MenuItem onClick={createHandleMenuClick('Language settings')}>
-                    Language settings
-                  </MenuItem>
-                  <MenuItem onClick={Logout}>
-                    Log out
-                  </MenuItem>
-                </Menu>
+                {menuOpen && (
+                  <Menu slots={{ listbox: 'ol' }}
+                    style={{
+                        backgroundColor: "white",
+                        width: '150px',
+                        height: 'auto',
+                        boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12)',
+                        zIndex:'2'
+                    }
+                  }
+                  >
+                    <MenuItem onClick={createHandleMenuClick('Profile')}>Profile</MenuItem>
+                    <MenuItem onClick={createHandleMenuClick('Language settings')}>
+                      Language
+                    </MenuItem>
+                    <MenuItem onClick={UserLogin? Logout: Login}>
+                      {UserLogin? 'Logout': 'Login'}
+                    </MenuItem>
+                  </Menu>
+                )}
                 </Dropdown>    
                     
 
