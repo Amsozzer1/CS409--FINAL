@@ -46,6 +46,11 @@ export default function Login(){
       }
     
     }
+    
+    function HomePage(){
+      console.log( "navigate to home page");
+      navigate( '../' );
+    }
 
     function handleLogin() {
         signInWithEmailAndPassword(auth, email, password)
@@ -53,6 +58,7 @@ export default function Login(){
             // Signed in 
             const user = userCredential.user;
             console.log('User logged in:', user);
+            HomePage();
             // ...
           })
           .catch((error) => {
@@ -62,11 +68,17 @@ export default function Login(){
       };
      function handleGoogleLogin(){
       signInWithRedirect(auth, provider);
+      HomePage();
       //navigate('/navbar');
   }
 
   function handleFacebookLogin(){
     signInWithRedirect(auth, provider2);
+    HomePage();
+  }
+
+  function registerPage(){
+    navigate( '../register' );
   }
 
     return(
@@ -75,14 +87,14 @@ export default function Login(){
             sx={{justifyContent:'center',width:'100%',height:'85vh',display:'flex',flexDirection:'column'}}
             >
                 
-                <Button sx={{color:'black',marginLeft:'35%',marginTop:'13%',width:'20px'}}>Back</Button>
-                <Button sx={{color:'black',top:'-35px',marginLeft:'25%'}}>Next</Button>
+                {/* <Button sx={{color:'black',marginLeft:'35%',marginTop:'13%',width:'20px'}}>Back</Button> */}
+                <Button sx={{color:'black',top:'-35px',marginLeft:'25%'}} onClick={registerPage}>Registert</Button>
                 
                 
             <h1 style={{textAlign:'center',fontWeight:'normal',fontSize:'48px',marginBottom:'37px'}}>Login</h1>
             
             <Input
-            sx={{backgroundColor:'lightgray',width:'443px',height:'64px',marginLeft:'auto',marginRight:'auto',border:'oldlace',borderColor:'black',borderRadius:'5px'}}
+            sx={{backgroundColor:'lightgray',width:'443px',height:'64px',marginLeft:'auto',marginRight:'auto',border:'oldlace',borderColor:'black',borderRadius:'5px', paddingLeft:'10px'}}
             placeholder="  Email"
             disableUnderline = {true}
             
@@ -91,7 +103,7 @@ export default function Login(){
 
             </Input>
             <Input
-            sx={{backgroundColor:'lightgray',width:'443px',height:'64px',marginLeft:'auto',marginRight:'auto',marginTop:'37px',border:'oldlace',borderColor:'black',borderRadius:'5px'}}
+            sx={{backgroundColor:'lightgray',width:'443px',height:'64px',marginLeft:'auto',marginRight:'auto',marginTop:'37px',border:'oldlace',borderColor:'black',borderRadius:'5px', paddingLeft:'10px'}}
             placeholder="  Password"
             disableUnderline = {true}
             onChange={(e) => setPassword(e.target.value)}

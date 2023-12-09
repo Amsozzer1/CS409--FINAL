@@ -39,9 +39,10 @@ return(
             sx={{
                 
                 height: 'auto',
-                width: '240px',
+                width: '265px',
                 backgroundColor: '#ABABAB',
-                opacity: '0.7',
+                opacity: '0.9',
+                borderRadius: '5px',
                 paddingBottom: '10px',
                 
             }}
@@ -51,13 +52,8 @@ return(
                     position: 'relative',
                     color: 'black',
                     backgroundColor: '#D9D9D9',
-                    width: '240px',
-                    height: '30px',
-                    
-                    
-
-
-                    
+                    width: '265px',
+                    height: '30px',  
                 }}
                 >
 

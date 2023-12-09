@@ -88,9 +88,10 @@ export function Stop({ DATA }) {
         <Box
           sx={{
             height: 'auto',
-            width: '240px',
+            width: '265px',
             backgroundColor: '#ABABAB',
-            opacity: '0.7',
+            borderRadius: '5px',
+            opacity: '0.9',
             paddingBottom: '10px',
           }}
         >
@@ -99,7 +100,8 @@ export function Stop({ DATA }) {
               position: 'relative',
               color: 'black',
               backgroundColor: '#D9D9D9',
-              width: '240px',
+              width: '265px',
+              borderRadius: '5px',
               height: '30px',
             }}
           >
@@ -121,6 +123,7 @@ export function Stop({ DATA }) {
               gap: '10px',
             }}
           >
+            {/* console.log( stopData ); */}
             {stopData.map((stop, key) => (
               <li key={key}>{stop.stop_name}</li>
             ))}

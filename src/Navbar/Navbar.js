@@ -122,6 +122,9 @@ export default function Navbar(){
       function Login(){
         navigate('/login');
       }
+      function handleHome(){
+        navigate('/');
+      }
     return (
       <div>
         <AppBar position="static" sx={{bgcolor:"#13294B", height:"80px"}}>
@@ -143,6 +146,7 @@ export default function Navbar(){
                         textDecoration: 'none',
                         lineHeight: "80px"
                     }}
+                    onClick={handleHome}
                 >
                     UIUC BusNav
                 </Typography>

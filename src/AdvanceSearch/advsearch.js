@@ -321,6 +321,7 @@ export default function AdvSearch(props){
                 backgroundColor: '#ABABAB',
                 borderRadius: '5px',
                 opacity: '0.9',
+                paddingBottom: '10px'
             }}
             >
                 <Button
@@ -434,7 +435,7 @@ export default function AdvSearch(props){
                         opacity: '0.9',
                         color: 'black',
                         verticalAlign: 'middle',
-                        marginTop: '10px'
+                        marginTop: '10px',
                         }}
                     onChange={(newValue) => {
                     setArrivalTime(newValue);
@@ -448,7 +449,7 @@ export default function AdvSearch(props){
                 />
                 </LocalizationProvider> 
 
-                {destinations.map((destination, index) => (
+                {/* {destinations.map((destination, index) => (
                     <Box key={destination.id} sx={{ display: 'flex', alignItems: 'center' }}>
                     <Autocomplete>
                         <TextField
@@ -486,7 +487,7 @@ export default function AdvSearch(props){
                 <Typography variant="body1">
                     add stop
                 </Typography>
-                </Box>
+                </Box> */}
                 </Box>
 
             </Box>
@@ -543,7 +544,7 @@ export default function AdvSearch(props){
                         color: 'black',
                         verticalAlign: 'middle',
                         marginTop: '10px',
-                        marginBottom: '20px'
+                        marginBottom: '10px'
                     }}
                     onChange={(event)=>{
 
