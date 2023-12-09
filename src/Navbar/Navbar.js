@@ -27,6 +27,7 @@ export default function Navbar(){
     const { handleSetEvents } = useUser();
     const [img,setImg] = React.useState('');
     const [menuOpen, setMenuOpen] = React.useState(false);
+    const [UserLogin, setUserLogin] = React.useState(false);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -45,6 +46,7 @@ export default function Navbar(){
               // https://firebase.google.com/docs/reference/js/auth.user
               setImg(currUser.photoURL);
               loadEvents(currUser.uid);
+              setUserLogin(true);
               // console.log(currUser.photoURL);
               // ...
             } else {
@@ -52,6 +54,7 @@ export default function Navbar(){
               // ...
               setImg('');
               handleSetEvents('', []);
+              setUserLogin(false);
             }
           });
         return unsubscribe;
@@ -115,6 +118,9 @@ export default function Navbar(){
           // An error happened.
         });
         navigate('/');
+      }
+      function Login(){
+        navigate('/login');
       }
     return (
       <div>
@@ -195,8 +201,8 @@ export default function Navbar(){
                     <MenuItem onClick={createHandleMenuClick('Language settings')}>
                       Language
                     </MenuItem>
-                    <MenuItem onClick={Logout}>
-                      Log out
+                    <MenuItem onClick={UserLogin? Logout: Login}>
+                      {UserLogin? 'Logout': 'Login'}
                     </MenuItem>
                   </Menu>
                 )}
