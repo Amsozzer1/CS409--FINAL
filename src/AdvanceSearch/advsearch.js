@@ -717,6 +717,13 @@ export default function AdvSearch(props){
                 </Typography>
                 </Box> */}
                 </Box>
+// <<<<<<< heh
+// {/* // <<<<<<< Jenny_adv_event
+// // =======
+// //                 </Box>
+// // >>>>>>> main */}
+// =======
+// >>>>>>> main
 
             </Box>
             : //else
@@ -821,3 +828,12 @@ export default function AdvSearch(props){
         // </div>
     );
 };
+// <<<<<<< heh
+// // <<<<<<< Jenny_adv_event
+// };
+// // =======
+
+// // >>>>>>> main
+// =======
+// };
+// >>>>>>> main
