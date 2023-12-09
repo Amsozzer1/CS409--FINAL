@@ -52,6 +52,113 @@ export var ROUTE = '';
 
 export var BUS = '';
 
+const TripDetails = ({ tripData }) => {
+    if (!tripData || !Array.isArray(tripData) || tripData.length === 0) {
+      console.error('Invalid or empty trip data: ', tripData);
+      return <p>Loading or invalid data...</p>;
+    }
+  
+    ////console.log(tripData);
+  
+    return (
+        <Box>
+        {
+          tripData.length>0?
+          (<Box
+            sx={
+                {
+                    position: 'relative',
+                    top: '10px',
+                    left: '0px',
+                    zIndex: '2',
+                
+                }
+            }
+            >
+                
+                <Box
+                    sx={{
+        
+                        height: 'auto',
+                        width: '265px',
+                        backgroundColor: '#ABABAB',
+                        opacity: '0.9',
+                        borderRadius: '5px',
+                        paddingBottom: '10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        
+                    }}
+                    >
+                      <Button
+                        sx={{
+                            position: 'relative',
+                            color: 'black',
+                            backgroundColor: '#D9D9D9',
+                            borderRadius: '5px',
+                            width: '265px',
+                            height: '30px',
+                            
+                            
+        
+        
+                            
+                        }}
+                        >
+        
+                            
+                            <p
+                            style={{
+                                position: 'relative',
+                                right: '80px',
+                            }}
+                            >Results</p>
+                        </Button>
+                        
+                        <h2>Trip Details</h2>
+        {tripData.map((leg, index) => {
+          if (leg.type === 'Walk') {
+            return (
+              <div key={index}>
+                <p>Leg {index + 1}</p>
+                <p>Type: {leg.type}</p>
+                <p>Begin: {leg.walk.begin.name}</p>
+                <p>End: {leg.walk.end.name}</p>
+                <p>Distance: {leg.walk.distance} miles</p>
+                <p>Direction: {leg.walk.direction}</p>
+                <hr></hr>
+              </div>
+            );
+          } else if (leg.type === 'Service' && leg.services && leg.services.length > 0) {
+            const service = leg.services[0]; // Assuming only one service in the array for simplicity
+            return (
+              <div key={index}>
+                <p>Leg {index + 1}</p>
+                <p>Type: {leg.type}</p>
+                <p>From: {service.begin.name}</p>
+                <p>To: {service.end.name}</p>
+                <p>Route: {service.route.route_short_name}</p>
+                <p>Trip Headsign: {service.trip.trip_headsign}</p>
+                <hr></hr>
+              </div>
+            );
+          } else {
+            return null; // Handle other types if needed
+          }
+        })}
+                        
+                        
+                
+            
+            </Box>
+            </Box>):null
+        }
+      </Box>
+    );
+  };
+
 
 
 export default function AdvSearch(props){
@@ -59,11 +166,51 @@ export default function AdvSearch(props){
         props.parentCallback(mes);
     };
 
-// <<<<<<< wangzhe
+    const [map, setMap] = useState(null);
+    const [directions, setDirections] = useState(null);
+    const [open, setOpen] = useState(false);
+    const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
+    const [directionResponse, setDirectionResponse] = useState(null);
+    const [distance, setDistance] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [long, setLong] = useState(-88.22884);
+    const [lat, setLat] = useState(40.11644);
+    const [selectedValue, setSelectedValue] = useState('');
+    const [selectedTime, setSelectedTime] = React.useState(null);
+    const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
 
+    const [data, setData] = useState([]);
+   
+    const [trips, setTrips] = useState([]);
+
+    const [departureTime, setDepartureTime] = React.useState(null);
+    const [arrivalTime, setArrivalTime] = React.useState(null);
+
+
+    const [coordinates, setCoordinates] = useState(null);
+
+    const [selectedPlace, setSelectedPlace] = useState(null);
+    const [searchResult, setSearchResult] = useState(null);
+    const [origin, setOrigin] = useState({lat: 40.12233, lon: -88.29619});
+    const [destination, setDestination] = useState({lat: 40.11626, lon: -88.25783});
+
+    const [itinerary, setItinerary] = useState(null);
+
+    const [walkTrip, setWalkTrip] = useState([]);
+    const [busTrip, setBusTrip] = useState([]);
+
+    const [walkTripInfo, setWalkTripInfo] = useState([]);
+    const [busTripInfo, setBusTripInfo] = useState([]);
+
+    const [routeShape, setRouteShape] = useState(null);
+
+    const [currRoute, setCurrRoute] = useState("");
+    const [vehicles, setVehicles] = useState([]);
+
+    
     const {user} = useUser();
     const events = user.getEvents();
-    // console.log( events );
+
     const now = new Date();
     const twoDaysLater = new Date( now.getTime() + ( 2*24*60*60*1000 ) );
 
@@ -72,14 +219,77 @@ export default function AdvSearch(props){
         return eventStart >= now && eventStart <= twoDaysLater;
     });
 
+    const getDirections = async () => {
+        const directionsService = new window.google.maps.DirectionsService();
+    
+        const request = {
+          origin: new window.google.maps.LatLng(origin.lat, origin.lon),
+          destination: new window.google.maps.LatLng(destination.lat, destination.lon),
+          travelMode: window.google.maps.TravelMode.WALKING, // or DRIVING, depending on your use case
+        };
+    
+        directionsService.route(request, (result, status) => {
+          if (status === window.google.maps.DirectionsStatus.OK) {
+            setDirections(result);
+          } else {
+            console.error('Error fetching directions:', status);
+          }
+        });
+    };
+
+    useEffect(() => {
+        // Fetch directions when origin/destination changes
+        getDirections();
+    }, [origin, destination]);
+
+    const getCoordinatesFromPlaceId = (placeId) => {
+        const map = new window.google.maps.Map(document.createElement('div'));
+        const placesService = new window.google.maps.places.PlacesService(map);
+
+        placesService.getDetails({ placeId }, (place, status) => {
+            if (status === 'OK') {
+                const { geometry } = place;
+                // //console.log(place);
+                // //console.log(geometry);
+                const { location } = geometry;
+                const loc = { lat: location.lat(), lng: location.lng() };
+                setTimeout(() => {
+                    setCoordinates(loc);
+                    setDestination({lat: loc.lat, lon: loc.lng});
+                }, 1);
+                // //console.log(loc);
+                // //console.log(destination);
+            } else {
+                console.error('Error fetching place details:', status);
+            }
+        });
+    };
+
+    function onLoad(autocomplete) {
+        // //console.log("Enter onLoad");
+        setSearchResult(autocomplete);
+    }
+
+    async function onPlaceChanged() {
+        // //console.log("Enter onPlaceChanged");
+        if (searchResult === null) {
+            return;
+        }
+        const place = searchResult.getPlace();
+        // //console.log(place);
+        setSelectedPlace(place);
+        getCoordinatesFromPlaceId(place.place_id);
+        // const { lat, lng } = placeDetails.geometry.location;
+        // //console.log(`Latitude: ${lat}, Longitude: ${lng}`);
+
+        // //console.log(destination);
+    }
+
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
     }
 
-    const [selectedValue, setSelectedValue] = useState('');
-    const [departureTime, setDepartureTime] = React.useState(null);
-    const [arrivalTime, setArrivalTime] = React.useState(null);
-    const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
+
 
     const addDestination = () => {
         setDestinations([...destinations, { id: uuidv4(), name: '' }]);
@@ -103,7 +313,7 @@ export default function AdvSearch(props){
 
     
 
-    const [open, setOpen] = useState(false);
+    // const [open, setOpen] = useState(false);
     // const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
     // const [directionResponse, setDirectionResponse] = useState(null);
     // const [distance, setDistance] = useState(0);
@@ -115,21 +325,21 @@ export default function AdvSearch(props){
     // const [data, setData] = useState([]);
    
 
-    const [origin, setOrigin] = useState({lat: 40.12233, lon: -88.29619});
-    const [destination, setDestination] = useState({lat: 40.11626, lon: -88.25783});
+    // const [origin, setOrigin] = useState({lat: 40.12233, lon: -88.29619});
+    // const [destination, setDestination] = useState({lat: 40.11626, lon: -88.25783});
 
-    const [itinerary, setItinerary] = useState(null);
+    // const [itinerary, setItinerary] = useState(null);
 
-    const [walkTrip, setWalkTrip] = useState([]);
-    const [busTrip, setBusTrip] = useState([]);
+    // const [walkTrip, setWalkTrip] = useState([]);
+    // const [busTrip, setBusTrip] = useState([]);
 
-    const [walkTripInfo, setWalkTripInfo] = useState([]);
-    const [busTripInfo, setBusTripInfo] = useState([]);
+    // const [walkTripInfo, setWalkTripInfo] = useState([]);
+    // const [busTripInfo, setBusTripInfo] = useState([]);
 
-    const [routeShape, setRouteShape] = useState(null);
+    // const [routeShape, setRouteShape] = useState(null);
 
-    const [currRoute, setCurrRoute] = useState("");
-    const [vehicles, setVehicles] = useState([]);
+    // const [currRoute, setCurrRoute] = useState("");
+    // const [vehicles, setVehicles] = useState([]);
 
 
     async function getPlannedTrip() {
@@ -137,12 +347,21 @@ export default function AdvSearch(props){
         if( departureTime != null ){
             console.log( "departure case" );
             const formattedDepartureTime = departureTime.format('YYYY-MM-DDTHH:mm:ss');
-            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&time=${formattedDepartureTime}&arrive_depart=depart`;
+            
+            const date = formattedDepartureTime.substring(0,10);
+            const time = formattedDepartureTime.substring(11,16);
+            // console.log(date);
+            // console.log(time);
+            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&date=${date}&time=${time}&arrive_depart=depart`;
+            // console.log(URL);
         }
         else if( arrivalTime != null ){
             console.log( "arrival case" );
+
             const formattedArrivalTime =arrivalTime.format( 'YYYY-MM-DDTHH:mm:ss' );
-            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&time=${formattedArrivalTime}&arrive_depart=arrive`;
+            const date = formattedDepartureTime.substring(0,10);
+            const time = formattedDepartureTime.substring(11, 16);
+            URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&date=${date}&time=${time}&arrive_depart=arrive`;
         }
         else{
             console.log( "normal case" );
@@ -151,12 +370,20 @@ export default function AdvSearch(props){
         try {
             const response = await fetch(URL);
             const data = await response.json();
-            console.log( "response data" );
-            console.log( data );
             const currItinerary = data.itineraries[0];
 
+            console.log(data);
+            // //console.log(currItinerary);
 
-            const trips = currItinerary.legs;
+            if (currItinerary === undefined || currItinerary === null) {
+                return;
+            }
+
+            setTimeout(() => {
+                setTrips(currItinerary.legs);
+            }, 1);
+
+            // //console.log(trips);
 
             let walkTrips = []
             let busTrips = [];
@@ -170,99 +397,94 @@ export default function AdvSearch(props){
                         busTrips.push(trip)
                     }
                 }
-
             }
 
-            setItinerary(data.itineraries[0]);
-            setWalkTrip(walkTrips);
-            setBusTrip(busTrips);
-
+            setTimeout(() => {
+                setItinerary(data.itineraries[0]);
+                setWalkTrip(walkTrips);
+                setBusTrip(busTrips);
+            }, 1);
           } catch (error) {
             console.error('Error fetching stop data: ', error);
           }
     }
 
     async function getWalkInfo() {
-        let walkInfo = [];
-        let walkResult = [];
-        for (let i = 0; i < walkTrip.length; ++i) {
-            let walk = {};
-            walk.origin = walkTrip[i].walk.begin;
-            walk.destnation = walkTrip[i].walk.end;
+         // setTimeout(() => {
+            // let walkInfo = [];
+            let walkResult = [];
+            for (let i = 0; i < walkTrip.length; ++i) {
+                let walk = {};
+                walk.origin = walkTrip[i].walk.begin;
+                walk.destnation = walkTrip[i].walk.end;
 
-            walkInfo.push(walk);
+                // walkInfo.push(walk);
 
-            const directionsService = new google.maps.DirectionsService();
-            const results = await directionsService.route({
-                origin: { lat: walk.origin.lat, lng: walk.origin.lon },
-                destination: { lat: walk.destnation.lat, lng: walk.destnation.lon },
-                travelMode: google.maps.TravelMode.WALKING,   
-            });
+                const directionsService = new google.maps.DirectionsService();
+                const results = directionsService.route({
+                    origin: { lat: walk.origin.lat, lng: walk.origin.lon },
+                    destination: { lat: walk.destnation.lat, lng: walk.destnation.lon },
+                    travelMode: google.maps.TravelMode.WALKING,   
+                });
 
-            walkResult.push(results);
-        }
+                walkResult.push(results);
+            }
 
-        // console.log(walkResult);
-
-        setWalkTripInfo(walkResult);
-        console.log( "walk trip info" )
-        console.log(walkTripInfo);
+            // //console.log(walkResult);
+            setTimeout(() => {
+                setWalkTripInfo(walkResult);
+            }, 1);  
+            // //console.log(walkTripInfo);
+        // }, 10000);   
     }
 
     async function getBusInfo() {
-        let busInfo = [];
-        for (let i = 0; i < busTrip.length; ++i) {
-            let bus = {};
-            let service = busTrip[i].services[0]
+         //await getPlannedTrip();
+        
+        // setTimeout(() => {
+            let busInfo = [];
+            for (let i = 0; i < busTrip.length; ++i) {
+                let bus = {};
+                let service = busTrip[i].services[0]
 
-            const URL = `https://developer.mtd.org/api/v2.2/json/getshape?key=ca74c75b34e64cc9bde55c9714918493&shape_id=${service.trip.shape_id}`;
-            try {
-                const response = await fetch(URL);
-                const data = await response.json();
+                bus.origin = service.begin.stop_id;
+                bus.destination = service.end.stop_id;
+                bus.route = service.route.route_id;
 
-                bus.shape = data.shapes;
-            } catch (error) {
-                console.error('Error fetching stop data: ', error);
+                busInfo.push(bus);
             }
 
+            setTimeout(() => {
+                setBusTripInfo(busInfo);
+            }, 1);    
 
-
-            bus.origin = service.begin.stop_id;
-            bus.destination = service.end.stop_id;
-            bus.route = service.route.route_id;
-            // bus.shape = service.trip.shape_id;
-            bus.trip = service.trip.trip_id;
-
-            busInfo.push(bus);
-        }
-
-        setBusTripInfo(busInfo);
+            // //console.log(busTripInfo);
+        // }, 10000); 
     }
 
     async function getVehicles() {
-        const vehicleURL = `https://developer.mtd.org/api/v2.2/json/getvehiclesbyroute?key=ca74c75b34e64cc9bde55c9714918493&route_id=${currRoute}`;
+        const URL = `https://developer.mtd.org/api/v2.2/json/getvehiclesbyroute?key=ca74c75b34e64cc9bde55c9714918493&route_id=${currRoute}`;
       
         try {
-            const response = await fetch(vehicleURL);
+            const response = await fetch(URL);
             const data = await response.json();
 
-            // console.log(data);
+            // //console.log(data);
 
             const currVehicles = data.vehicles;
             
 
-            setVehicles(currVehicles);
+            // //console.log(currVehicles);
+            setTimeout(() => {
+                setVehicles(currVehicles);
+            }, 1);  
             
-            // console.log(vehicles);
+            // //console.log(vehicles);
 
 
-        } catch (error) {
+          } catch (error) {
             console.error('Error fetching stop data: ', error);
-        }
-
-
-        // console.log( " vehicles trip info" );
-        // console.log( vehiclestrip)
+          }
     }
 
 
@@ -283,28 +505,34 @@ export default function AdvSearch(props){
 
 
     function handleSearch() {
-        getPlannedTrip();
+         getPlannedTrip();
 
-        getWalkInfo();
-        getBusInfo();
+        // //console.log(itinerary);
 
+         getBusInfo();
         if (busTripInfo.length > 0) {
-            // console.log(busTripInfo);
-            setCurrRoute(busTripInfo[0].route);
+            setTimeout(() => {
+                setCurrRoute(busTripInfo[0].route);
+            }, 1);  
         }
+
+         getWalkInfo();
 
         if (currRoute !== "") {
             getVehicles();
         }
-        
 
+        const routeInfo = {};
+        routeInfo['walk'] = walkTripInfo;
+        routeInfo['bus'] = busTripInfo;
+        routeInfo['vehicle'] = vehicles;
 
-        console.log(itinerary);
+        sendData(routeInfo);
+
+        return(<TripDetails tripData ={trips}></TripDetails>);
     }
 
     return (
-        // <div style={{ position: 'relative', zIndex: 2 }}>
-        // <div>
         <Box
         sx={{
             position: 'absolute',
@@ -530,7 +758,10 @@ export default function AdvSearch(props){
                     marginLeft: '10px'
                 }}
                 >
-                <Autocomplete>
+                <Autocomplete
+                    onPlaceChanged={onPlaceChanged}
+                    onLoad={onLoad}
+                >
                 <Input
                     type='text'
                     name='destination'
@@ -554,7 +785,11 @@ export default function AdvSearch(props){
                     ></Input>
                 </Autocomplete>
                     <Button
-                    onClick={handleSearch}
+                        onClick={handleSearch}
+                        onChange={(event)=>{
+                            //console.log(event.target.value);
+                            setDestination(event.target.value);
+                        }}
                     >
                     <Search
                     sx={{
@@ -567,6 +802,16 @@ export default function AdvSearch(props){
                 </Box>
                 
             </Box>
+            }
+
+            {
+                trips &&
+                
+                
+                (<TripDetails tripData ={trips}>
+                    
+                </TripDetails>
+                )
             }
             
             {/* <Results data={data}></Results> */}
