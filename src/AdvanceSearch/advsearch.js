@@ -348,6 +348,13 @@ export default function AdvSearch(props){
 
     async function getPlannedTrip() {
         let URL = ``;
+        navigator.geolocation.getCurrentPosition((position) => {
+            // setLong(position.coords.longitude);
+            // setLat(position.coords.latitude);
+            setTimeout(() => {
+                setOrigin({lat: position.coords.latitude, lon: position.coords.longitude});
+            }, 1);
+        });
         if( departureTime != null ){
             console.log( "departure case" );
             const formattedDepartureTime = departureTime.format('YYYY-MM-DDTHH:mm:ss');

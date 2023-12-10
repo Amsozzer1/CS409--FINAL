@@ -1,5 +1,5 @@
 import React from 'react';
-import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow, Polyline } from '@react-google-maps/api';
 import { useState, useEffect, useRef } from 'react';
 import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
 import Navbar from '../Navbar/Navbar';
@@ -33,6 +33,57 @@ const Map = (props) => {
   console.log(walkRoute);
   console.log(busRoute);
   console.log(vehicle);
+
+  console.log(typeof busRoute);
+
+  
+
+  var routeCoord = [];
+  if (busRoute !== undefined) {
+    for (let i = 0; i < busRoute.length; ++i) {
+      // const routeCoords = [];
+      // const singleRoute = busRoute[i];
+  
+      // for (let j = 0; j < singleRoute.length; ++j) {
+      //   const singleCoord = {};
+      //   singleCoord['lat'] = singleRoute.
+      //   routeCoords = {...routeCoords, }
+      // }
+  
+      const singleRoute = busRoute[i];
+      const pathCoordinates = singleRoute.map(
+        point => (
+          {
+            lat: point.shape_pt_lat,
+            lng: point.shape_pt_lon
+          }
+        )
+      );
+  
+      routeCoord = routeCoord.concat(pathCoordinates);
+    }
+
+    console.log(routeCoord);
+    console.log(routeCoord[0]);
+  }
+  
+
+  // const routePath = new google.maps.Polyline(
+  //   {
+  //     path: routeCoord,
+  //     geodesic: true,
+  //     strokeColor: '#FF0000',
+  //     strokeOpacity: 1.0,
+  //     strokeWeight: 2
+  //   }
+  // );
+
+
+
+  if (busRoute !== undefined) {
+    console.log(typeof busRoute[0]);
+  }
+ 
 
   // console.log(walkRoute[0]);
 
@@ -94,9 +145,18 @@ const Map = (props) => {
             mapTypeControl: false,
           }}
         >
-          {/* {busRoute.map((coordinate, index) => (
-          <Marker key={index} position={coordinate} />
-        ))} */}
+          {
+            routeCoord.length > 0 && 
+            <Polyline
+          path={routeCoord}
+          options={{
+            strokeColor: "#4285F4", // Google Maps default route color
+            strokeOpacity: 1.0,
+            strokeWeight: 4,
+          }}
+        />
+          }
+        
           <MarkerF position={currentLocation} />
           {/* <MarkerF position={center} /> */}
           {walkRoute && (
