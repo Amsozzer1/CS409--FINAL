@@ -34,6 +34,8 @@ const Map = (props) => {
   console.log(busRoute);
   console.log(vehicle);
 
+  // console.log(walkRoute[0]);
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -92,6 +94,9 @@ const Map = (props) => {
             mapTypeControl: false,
           }}
         >
+          {/* {busRoute.map((coordinate, index) => (
+          <Marker key={index} position={coordinate} />
+        ))} */}
           <MarkerF position={currentLocation} />
           {/* <MarkerF position={center} /> */}
           {walkRoute && (

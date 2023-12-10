@@ -425,16 +425,18 @@ export default function AdvSearch(props){
                 // walkInfo.push(walk);
 
                 const directionsService = new google.maps.DirectionsService();
-                const results = directionsService.route({
+                const results = await directionsService.route({
                     origin: { lat: walk.origin.lat, lng: walk.origin.lon },
                     destination: { lat: walk.destnation.lat, lng: walk.destnation.lon },
                     travelMode: google.maps.TravelMode.WALKING,   
                 });
 
+                // console.log(results);
+
                 walkResult.push(results);
             }
 
-            // //console.log(walkResult);
+            // console.log(walkResult);
             setTimeout(() => {
                 setWalkTripInfo(walkResult);
             }, 1);  
@@ -442,28 +444,88 @@ export default function AdvSearch(props){
         // }, 10000);   
     }
 
-    async function getBusInfo() {
-         //await getPlannedTrip();
+    async function getBusShapeInfo() {
+        let busInfo = [];
+        let busRouteInfo = [];
+
+        // console.log(busTrip);
+        for (let i = 0; i < busTrip.length; ++i) {
+            let bus = {};
+            let service = busTrip[i].services[0]
+            bus.origin = service.begin.stop_id;
+            bus.destination = service.end.stop_id;
+            bus.route = service.route.route_id;
+            bus.shape_id = service.trip.shape_id;
+
+
+            const URL = `https://developer.mtd.org/api/v2.2/json/getshapebetweenstops?key=ca74c75b34e64cc9bde55c9714918493&begin_stop_id=${service.begin.stop_id}&end_stop_id=${service.end.stop_id}&shape_id=${service.trip.shape_id}`;  
         
+            const response = await fetch(URL);
+            const data = await response.json();
+
+            console.log(data);
+            
+
+            busInfo.push(bus);
+        }
+
+        setTimeout(() => {
+            setBusTripInfo(busInfo);
+        }, 1); 
+
+
+
+        URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;  
+        
+    }
+
+    async function getBusInfo() {
+        // let busInfo = [];
+        // let busRouteInfo = [];
+
+        // for (let i = 0; i < busTrip.length; ++i) {
+        //     let bus = {};
+        //     let service = busTrip[i].services[0]
+
+        //     bus.origin = service.begin.stop_id;
+        //     bus.destination = service.end.stop_id;
+        //     bus.route = service.route.route_id;
+        //     bus.shape_id = service.trip.shape_id;
+
+        //     busInfo.push(bus);
+        // }
+
         // setTimeout(() => {
-            let busInfo = [];
-            for (let i = 0; i < busTrip.length; ++i) {
-                let bus = {};
-                let service = busTrip[i].services[0]
+        //     setBusTripInfo(busInfo);
+        // }, 1);  
+        
+        
+        let busInfo = [];
+        let busRouteInfo = [];
 
-                bus.origin = service.begin.stop_id;
-                bus.destination = service.end.stop_id;
-                bus.route = service.route.route_id;
+        // console.log(busTrip);
+        for (let i = 0; i < busTrip.length; ++i) {
+            let bus = {};
+            let service = busTrip[i].services[0]
+            bus.origin = service.begin.stop_id;
+            bus.destination = service.end.stop_id;
+            bus.route = service.route.route_id;
+            bus.shape_id = service.trip.shape_id;
 
-                busInfo.push(bus);
-            }
 
-            setTimeout(() => {
-                setBusTripInfo(busInfo);
-            }, 1);    
+            const URL = `https://developer.mtd.org/api/v2.2/json/getshapebetweenstops?key=ca74c75b34e64cc9bde55c9714918493&begin_stop_id=${service.begin.stop_id}&end_stop_id=${service.end.stop_id}&shape_id=${service.trip.shape_id}`;  
+        
+            const response = await fetch(URL);
+            const data = await response.json();
 
-            // //console.log(busTripInfo);
-        // }, 10000); 
+            busRouteInfo.push(data.shapes);
+
+            busInfo.push(bus);
+        }
+
+        setTimeout(() => {
+            setBusTripInfo(busRouteInfo);
+        }, 1); 
     }
 
     async function getVehicles() {
