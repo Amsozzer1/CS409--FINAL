@@ -88,7 +88,7 @@ export default function Login(){
             >
                 
                 {/* <Button sx={{color:'black',marginLeft:'35%',marginTop:'13%',width:'20px'}}>Back</Button> */}
-                <Button sx={{color:'black',top:'-35px',marginLeft:'25%'}} onClick={registerPage}>Registert</Button>
+                <Button sx={{color:'black',top:'-35px',marginLeft:'25%'}} onClick={registerPage}>Register</Button>
                 
                 
             <h1 style={{textAlign:'center',fontWeight:'normal',fontSize:'48px',marginBottom:'37px'}}>Login</h1>

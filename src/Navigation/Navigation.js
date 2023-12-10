@@ -35,11 +35,24 @@ const Navigation = () => {
   }
 
   return (
-    <div>
+    <div
+    style={{
+
+
+      
+    }}
+    
+    >
         <Navbar />
-        
-        <Map queryResult={result} />
+        <div
+        style = {{
+
+          height:'fit-content',
+        }}>
+        <Map queryResult={result} ></Map>
         <AdvSearch parentCallback={callbackFunction} />
+
+        </div>
     </div>
   );
 };

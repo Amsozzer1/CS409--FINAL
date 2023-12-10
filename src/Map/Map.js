@@ -15,6 +15,7 @@ import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
 // //>>>>>>> main
 // >>>>>>> main
 import Navbar from '../Navbar/Navbar';
+import { set } from 'date-fns';
 
 const libraries = ['places'];
 const mapContainerStyle = {
@@ -86,17 +87,18 @@ const Map = (props) => {
   const updateRouteCoordinates = (routeCoord) => {
     
 
-    console.log('newBusRoute');
+    //console.log('newBusRoute');
     if (routeCoord !== undefined) {
       let updatedRouteCoord = [];
       for (let i = 0; i < routeCoord.length; ++i) {
+        
         const singleRoute = routeCoord[i];
         const pathCoordinates = singleRoute.map(point => ({
           lat: point.shape_pt_lat,
           lng: point.shape_pt_lon
-        }));
+        }),where => ({}));
         updatedRouteCoord = updatedRouteCoord.concat(pathCoordinates);
-        console.log("HERE"+updatedRouteCoord);
+        //console.log("HERE"+updatedRouteCoord);
       }
       setRouteCoord(updatedRouteCoord); // Update route coordinates state
     } else {
@@ -153,9 +155,20 @@ const Map = (props) => {
     DESTINATION = selectedLocation
   }
  
- async function handleChange() {
-  return(false)
-  }
+ function handleChange() {
+  console.log("handle change");
+  setRouteCoord([]);
+
+  };
+  React.componentDidMount=() =>{ 
+  
+    // Changing the state after 2 sec 
+    // from the time when the component 
+    // is rendered 
+    setTimeout(() => { 
+      console.log("handle change");
+    }, 2000); 
+  } 
   return (
     // <div style={{ height: '89vh', width: '100%', position: 'relative', zIndex: 1 }}>
     <div style={{ top: '80px', height: 'calc(100vh - 80px)', width: '100%' }}>
@@ -170,16 +183,17 @@ const Map = (props) => {
             mapTypeControl: false,
           }}
         >
-          {routeCoord.length > 0 && handleChange()&& (
+          {routeCoord.length > 0 &&(
         <Polyline
         path={routeCoord}
         
-        setVisible={true}
+        setVisible={false}
           options={{
             strokeColor: "#4285F4", // Google Maps default route color
             strokeOpacity: 1.0,
             strokeWeight: 4,
           }}
+          
         />
       )}
         

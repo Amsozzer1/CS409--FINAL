@@ -63,7 +63,13 @@ const TripDetails = ({ tripData }) => {
     ////console.log(tripData);
   
     return (
-        <Box>
+        <Box
+         sx= {{
+
+            maxHeight: 'inherit',
+           overflow: 'auto'
+         }}
+         >
         {
           tripData.length>0?
           (<Box
@@ -73,6 +79,9 @@ const TripDetails = ({ tripData }) => {
                     top: '10px',
                     left: '0px',
                     zIndex: '2',
+                    
+                    
+                    
                 
                 }
             }
@@ -81,8 +90,9 @@ const TripDetails = ({ tripData }) => {
                 <Box
                     sx={{
         
-                        height: 'auto',
-                        width: '265px',
+                        maxHeight: 'inherit',
+                        
+                        width: 'fit-content',
                         backgroundColor: '#ABABAB',
                         opacity: '0.9',
                         borderRadius: '5px',
@@ -92,15 +102,17 @@ const TripDetails = ({ tripData }) => {
                         justifyContent: 'center',
                         alignItems: 'center',
                         
+                        
                     }}
                     >
                       <Button
                         sx={{
-                            position: 'relative',
+                            position: 'sticky',
+                            top: 0, /* required */
                             color: 'black',
                             backgroundColor: '#D9D9D9',
                             borderRadius: '5px',
-                            width: '265px',
+                            width: '100%',
                             height: '30px',
                             
                             
@@ -611,7 +623,8 @@ export default function AdvSearch(props){
             position: 'absolute',
             top: '150px',
             left: '20px',
-            zIndex: '2'
+            zIndex: '2',
+            maxHeight:'500px',
         }}
         >
             
