@@ -2,12 +2,14 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import moment from 'moment'
 import { useUser } from '../User/User'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import ical from 'ical.js'
 import NavBar from '../Navbar/Navbar'
-import { useTheme, TextField, IconButton, Button, styled, Toolbar, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, useMediaQuery } from '@mui/material'
+import { useTheme, ButtonGroup, Tooltip, TextField, IconButton, Button, styled, Toolbar, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, useMediaQuery } from '@mui/material'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import InfoIcon from '@mui/icons-material/Info';
+import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { backendURL } from '../Backend/Backend.js';
 import EventImport from './EventImport.js';
 
@@ -16,12 +18,25 @@ import EventImport from './EventImport.js';
 const localizer = momentLocalizer(moment) // or globalizeLocalizer
 
 const EventCalendar = (props) => {
-    const { user, handleSetEvents, handleAddEvent } = useUser();
+    const { user, handleSetEvents, handleAddEvent, handleDeleteEvent, handleDeleteAllEvents } = useUser();
     const [open, setOpen] = useState(false);
     let eventStart = useRef(new Date());
     let eventEnd = useRef(new Date());
     const [title, setTitle] = useState('');
-    const [openInStruction, setOpenInStruction] = useState(false);
+    const [openInstruction, setOpenInstruction] = useState(false);
+    const [isSelected, setIsSelected] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [deleteConfirm, setDeleteConfirm] = useState(false);
+    const [deleteAllConfirm, setDeleteAllConfirm] = useState(false);
+    const [canDeleteAll, setCanDeleteAll] = useState(false);
+    useEffect(() => {
+        if (user.getEvents().length > 0 && !canDeleteAll) {
+            setCanDeleteAll(true);
+        } else if (user.getEvents().length === 0 && canDeleteAll) {
+            setCanDeleteAll(false);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user.getEvents().length]);
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
 
@@ -82,8 +97,6 @@ const EventCalendar = (props) => {
                 'Content-Type': 'application/json'
             },
             body: dataToSend
-        }).then(response => {
-            console.log(response);
         }).catch(error => {
             console.error('Fetch error:', error);
         });
@@ -128,24 +141,59 @@ const EventCalendar = (props) => {
         }
     };
     const handleCloseDialog = () => {
-        setOpenInStruction(false);
+        setOpenInstruction(false);
+    };
+    const handleSelectEvent = (event) => {
+        if (!isSelected) {
+            setIsSelected(true);
+            setSelectedEvent(event);
+            return;
+        }
+        if (selectedEvent.start === event.start && selectedEvent.end === event.end && selectedEvent.title === event.title) {
+            setIsSelected(false);
+            setSelectedEvent(null);
+            return;
+        }
+        setSelectedEvent(event);
+    };
+    const handleDelete = () => {
+        handleDeleteEvent(selectedEvent);
+        setDeleteConfirm(false);
+        setIsSelected(false);
+        setSelectedEvent(null);
+    }
+    const handleDeleteAll = () => {
+        handleDeleteAllEvents();
+        setDeleteAllConfirm(false);
     };
     return (
         <div>
             <NavBar />
             <div style={{ top: '80px', height: 'calc(100vh - 80px)', width: '100%' }} >
-                <Toolbar sx={{ justifyContent: 'end', boxSizing: 'border-box' }}>
-                    <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                        Upload file (.ics)
-                        <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
-                    </Button>
-                    <IconButton variant="contained" sx={{ marginLeft: '10px' }} onClick={() => setOpenInStruction(true)}>
-                        <InfoIcon />
-                    </IconButton>
+                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', boxSizing: 'border-box' }}>
+                    <ButtonGroup variant="contained" >
+                        <Button variant="contained" disabled={!isSelected} sx={{ backgroundColor: '#f44336' }} onClick={() => setDeleteConfirm(true)} >
+                            <DeleteIcon /> Delete Event
+                        </Button>
+                        <Button variant="contained" disabled={!canDeleteAll} sx={{ backgroundColor: '#f44336' }} onClick={() => setDeleteAllConfirm(true)} >
+                            <DeleteForeverIcon /> Delete All Events
+                        </Button>
+                    </ButtonGroup>
+                    <div>
+                        <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+                            Upload file (.ics)
+                            <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
+                        </Button>
+                        <Tooltip title="Instructions for Exporting .ics File">
+                            <IconButton variant="contained" sx={{ marginLeft: '10px' }} onClick={() => setOpenInstruction(true)}>
+                                <InfoIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
                 </Toolbar>
-                <EventImport openInStruction={openInStruction} handleCloseDialog={handleCloseDialog} />
+                <EventImport openInStruction={openInstruction} handleCloseDialog={handleCloseDialog} />
                 <Dialog open={open} onClose={handleCancel} maxWidth='md' fullWidth >
-                    <DialogTitle sx={{fontWeight: '900'}}>Add a New Event</DialogTitle>
+                    <DialogTitle sx={{ fontWeight: '900' }}>Add a New Event</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             <strong>Selected Slot:</strong>
@@ -171,6 +219,35 @@ const EventCalendar = (props) => {
                         <Button onClick={handleSave}>Save</Button>
                     </DialogActions>
                 </Dialog>
+                <Dialog open={deleteAllConfirm} onClose={() => setDeleteAllConfirm(false)} maxWidth='md' fullWidth >
+                    <DialogTitle sx={{ fontWeight: '900' }}>Delete All Events</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Are you sure you want to delete all events?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setDeleteAllConfirm(false)}>Cancel</Button>
+                        <Button sx={{ color: '#f44336' }} onClick={handleDeleteAll}>Delete ALL</Button>
+                    </DialogActions>
+                </Dialog>
+                <Dialog open={deleteConfirm} onClose={() => setDeleteConfirm(false)} maxWidth='md' fullWidth >
+                    <DialogTitle sx={{ fontWeight: '900' }}>Delete Event</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Are you sure you want to delete this event?
+                        </DialogContentText>
+                        <DialogContentText sx={{ marginTop: '16px', paddingLeft: '16px' }}>
+                            <div><strong>Title: {selectedEvent?.title}</strong></div>
+                            <div><strong>Start: {selectedEvent?.start?.toLocaleString()}</strong></div>
+                            <div><strong>End: {selectedEvent?.end?.toLocaleString()}</strong></div>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => setDeleteConfirm(false)}>Cancel</Button>
+                        <Button sx={{ color: '#f44336' }} onClick={handleDelete}>Delete</Button>
+                    </DialogActions>
+                </Dialog>
                 <div style={{ height: 'calc(100vh - 80px - 64px)', width: '100%' }}>
                     <Calendar
                         localizer={localizer}
@@ -181,6 +258,8 @@ const EventCalendar = (props) => {
                         onSelectSlot={handleSelect}
                         startAccessor="start"
                         endAccessor="end"
+                        onSelectEvent={handleSelectEvent}
+                        selected={selectedEvent}
                     />
                 </div>
             </div>
