@@ -55,10 +55,10 @@ export var ROUTE = '';
 export var BUS = '';
 
 const TripDetails = ({ tripData }) => {
-    if (!tripData || !Array.isArray(tripData) || tripData.length === 0) {
-    //   console.error('Invalid or empty trip data: ', tripData);
-      return null;
-    }
+    if (!tripData || tripData.length === 0 || !Array.isArray(tripData)) {
+        // If tripData is not fetched or is invalid, return nothing
+        return <span>No Route Found Or Incomplete Search</span>;
+      }
   
     ////console.log(tripData);
   
@@ -147,7 +147,7 @@ const TripDetails = ({ tripData }) => {
               </div>
             );
           } else {
-            return null; // Handle other types if needed
+            return <span>No Route Found</span>; // Handle other types if needed
           }
         })}
                         
@@ -155,7 +155,7 @@ const TripDetails = ({ tripData }) => {
                 
             
             </Box>
-            </Box>):null
+            </Box>):<span>No Route Found</span>
         }
       </Box>
     );

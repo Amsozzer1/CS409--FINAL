@@ -28,18 +28,22 @@ const Map = (props) => {
   
   let data = props.queryResult;
 
-  // console.log(data);
+  console.log(data);
 
-  const [long, setLong] = React.useState(0);
-  const [lat, setLat] = React.useState(0);
+  // const [long, setLong] = React.useState(0);
+  // const [lat, setLat] = React.useState(0);
   
-  const [navigate, setNavigate] = React.useState(false);
-
-  const [currentLocation, setCurrentLocation] = React.useState(null);
-
+  // const [navigate, setNavigate] = React.useState(false);
+  const [routeCoord, setRouteCoord] = React.useState([]);
+  const [currentLocation, setCurrentLocation] = React.useState({
+    lat: 0,
+    lng: 0,
+  });
   const walkRoute = data.walk;
   const busRoute = data.bus;
   const vehicle = data.vehicle;
+  
+
 
   console.log(data);
   console.log(walkRoute);
@@ -50,54 +54,61 @@ const Map = (props) => {
 
   
 
-  var routeCoord = [];
-  if (busRoute !== undefined) {
-    for (let i = 0; i < busRoute.length; ++i) {
-      // const routeCoords = [];
-      // const singleRoute = busRoute[i];
+  // var routeCoord = [];
+  // if (busRoute !== undefined) {
+  //   for (let i = 0; i < busRoute.length; ++i) {
+  //     // const routeCoords = [];
+  //     // const singleRoute = busRoute[i];
   
-      // for (let j = 0; j < singleRoute.length; ++j) {
-      //   const singleCoord = {};
-      //   singleCoord['lat'] = singleRoute.
-      //   routeCoords = {...routeCoords, }
-      // }
+  //     // for (let j = 0; j < singleRoute.length; ++j) {
+  //     //   const singleCoord = {};
+  //     //   singleCoord['lat'] = singleRoute.
+  //     //   routeCoords = {...routeCoords, }
+  //     // }
   
-      const singleRoute = busRoute[i];
-      const pathCoordinates = singleRoute.map(
-        point => (
-          {
-            lat: point.shape_pt_lat,
-            lng: point.shape_pt_lon
-          }
-        )
-      );
+  //     const singleRoute = busRoute[i];
+  //     const pathCoordinates = singleRoute.map(
+  //       point => (
+  //         {
+  //           lat: point.shape_pt_lat,
+  //           lng: point.shape_pt_lon
+  //         }
+  //       )
+  //     );
   
-      routeCoord = routeCoord.concat(pathCoordinates);
-    }
-
-    console.log(routeCoord);
-    console.log(routeCoord[0]);
-  }
-  
-
-  // const routePath = new google.maps.Polyline(
-  //   {
-  //     path: routeCoord,
-  //     geodesic: true,
-  //     strokeColor: '#FF0000',
-  //     strokeOpacity: 1.0,
-  //     strokeWeight: 2
+  //     routeCoord = routeCoord.concat(pathCoordinates);
   //   }
-  // );
+
+  //   console.log(routeCoord);
+  //   console.log(routeCoord[0]);
+  // }
+
+  const updateRouteCoordinates = (routeCoord) => {
+    
+
+    console.log('newBusRoute');
+    if (routeCoord !== undefined) {
+      let updatedRouteCoord = [];
+      for (let i = 0; i < routeCoord.length; ++i) {
+        const singleRoute = routeCoord[i];
+        const pathCoordinates = singleRoute.map(point => ({
+          lat: point.shape_pt_lat,
+          lng: point.shape_pt_lon
+        }));
+        updatedRouteCoord = updatedRouteCoord.concat(pathCoordinates);
+        console.log("HERE"+updatedRouteCoord);
+      }
+      setRouteCoord(updatedRouteCoord); // Update route coordinates state
+    } else {
+      setRouteCoord([]); // Clear route coordinates if new data is undefined
+    }
+  };
+  useEffect(() => {
+
+    updateRouteCoordinates(props.queryResult.bus);
+  }, [props.queryResult.bus]);
 
 
-
-  if (busRoute !== undefined) {
-    console.log(typeof busRoute[0]);
-  }
- 
-
-  // console.log(walkRoute[0]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -119,7 +130,7 @@ const Map = (props) => {
 
 
       
-  const [center, setCenter] = useState({ lat:  40.145714753336584, lng:-87.9655735301962 });
+  const [center, setCenter] = useState({ lat:  currentLocation.lat, lng: currentLocation.lng });
 
   const [zoom, setZoom] = useState(16);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -142,7 +153,9 @@ const Map = (props) => {
     DESTINATION = selectedLocation
   }
  
-
+ async function handleChange() {
+  return(false)
+  }
   return (
     // <div style={{ height: '89vh', width: '100%', position: 'relative', zIndex: 1 }}>
     <div style={{ top: '80px', height: 'calc(100vh - 80px)', width: '100%' }}>
@@ -157,23 +170,25 @@ const Map = (props) => {
             mapTypeControl: false,
           }}
         >
-          {
-            routeCoord.length > 0 && 
-            <Polyline
-          path={routeCoord}
+          {routeCoord.length > 0 && handleChange()&& (
+        <Polyline
+        path={routeCoord}
+        
+        setVisible={true}
           options={{
             strokeColor: "#4285F4", // Google Maps default route color
             strokeOpacity: 1.0,
             strokeWeight: 4,
           }}
         />
-          }
+      )}
         
           <MarkerF position={currentLocation} />
           {/* <MarkerF position={center} /> */}
           {walkRoute && (
             <DirectionsRenderer directions={walkRoute[0]} />
           )}
+          
             {selectedLocation && (
             <InfoWindow
               position={selectedLocation}
