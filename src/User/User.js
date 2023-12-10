@@ -33,10 +33,14 @@ class User {
         }
         this.events.splice(insertIndex, 0, newEvent);
     };
-    // getNextEvent = () => {
-
-
-    // }
+    deleteEvent = (event) => {
+        const index = this.events.findIndex(
+            (e) => e.start.getTime() === event.start.getTime()
+                && e.end.getTime() === event.end.getTime()
+                && e.title === event.title
+        );
+        this.events.splice(index, 1);
+    };
 }
 
 const UserProvider = ({ children }) => {
@@ -46,33 +50,6 @@ const UserProvider = ({ children }) => {
         const updatedUser = new User();
         updatedUser.setId(user.getId());
         updatedUser.setEvents(user.getEvents());
-// <<<<<<< Jenny_adv_event
-//         if (user.getEvents().length === 0) {
-//             fetch(`${backendURL}/events/${user.getId()}`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify({events: [newEvent]})
-//             }).then(response => {
-//                 console.log(response);
-//             }).catch(error => {
-//                 console.error('Fetch error:', error);
-//             });
-//         } else {
-//             fetch(`${backendURL}/events/${user.getId()}`, {
-//                 method: 'PUT',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify({events: [newEvent]})
-//             }).then(response => {
-//                 console.log(response);
-//             }).catch(error => {
-//                 console.error('Fetch error:', error);
-//             });
-//         }
-// =======
         const hasEvents = user.getEvents().length > 0;
         fetch(`${backendURL}/events/${user.getId()}`, {
             method: (hasEvents ? 'PUT' : 'POST'),
@@ -80,12 +57,9 @@ const UserProvider = ({ children }) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({events: [newEvent]})
-        }).then(response => {
-            console.log(response);
         }).catch(error => {
             console.error('Fetch error:', error);
         });
-// >>>>>>> main
         updatedUser.addEvent(newEvent);
         sessionStorage.setItem(user.getId(), JSON.stringify(updatedUser.getEvents()));
         setUser(updatedUser);
@@ -99,8 +73,34 @@ const UserProvider = ({ children }) => {
         setUser(updatedUser);
     };
 
+    const handleDeleteEvent = (event) => {
+        const updatedUser = new User();
+        updatedUser.setId(user.getId());
+        updatedUser.setEvents(user.getEvents());
+        updatedUser.deleteEvent(event);
+        fetch(`${backendURL}/events/${user.getId()}?start=${event.start.toISOString()}&end=${event.end.toISOString()}&title=${event.title}`, {
+            method: 'DELETE'
+        }).catch(error => {
+            console.error('Fetch error:', error);
+        });
+        sessionStorage.setItem(user.getId(), JSON.stringify(updatedUser.getEvents()));
+        setUser(updatedUser);
+    };
+
+    const handleDeleteAllEvents = () => {
+        const updatedUser = new User();
+        updatedUser.setId(user.getId());
+        fetch(`${backendURL}/events/${user.getId()}?all=true`, {
+            method: 'DELETE'
+        }).catch(error => {
+            console.error('Fetch error:', error);
+        });
+        sessionStorage.setItem(user.getId(), JSON.stringify([]));
+        setUser(updatedUser);
+    }
+
     return (
-        <UserContext.Provider value={{ user, handleAddEvent, handleSetEvents }}>
+        <UserContext.Provider value={{ user, handleAddEvent, handleSetEvents, handleDeleteEvent, handleDeleteAllEvents }}>
             {children}
         </UserContext.Provider>
     );
