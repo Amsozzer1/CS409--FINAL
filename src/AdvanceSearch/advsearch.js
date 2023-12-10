@@ -18,6 +18,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
+import dayjs from 'dayjs';
+
 // import { useState } from 'react';
 import { Select, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -287,6 +289,8 @@ export default function AdvSearch(props){
 
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
+        const newDayjsObject = dayjs(event.target.value.start);
+        setArrivalTime( newDayjsObject );
     }
 
 
@@ -344,6 +348,13 @@ export default function AdvSearch(props){
 
     async function getPlannedTrip() {
         let URL = ``;
+        navigator.geolocation.getCurrentPosition((position) => {
+            // setLong(position.coords.longitude);
+            // setLat(position.coords.latitude);
+            setTimeout(() => {
+                setOrigin({lat: position.coords.latitude, lon: position.coords.longitude});
+            }, 1);
+        });
         if( departureTime != null ){
             console.log( "departure case" );
             const formattedDepartureTime = departureTime.format('YYYY-MM-DDTHH:mm:ss');
@@ -359,8 +370,8 @@ export default function AdvSearch(props){
             console.log( "arrival case" );
 
             const formattedArrivalTime =arrivalTime.format( 'YYYY-MM-DDTHH:mm:ss' );
-            const date = formattedDepartureTime.substring(0,10);
-            const time = formattedDepartureTime.substring(11, 16);
+            const date = formattedArrivalTime.substring(0,10);
+            const time = formattedArrivalTime.substring(11, 16);
             URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}&date=${date}&time=${time}&arrive_depart=arrive`;
         }
         else{
@@ -421,16 +432,18 @@ export default function AdvSearch(props){
                 // walkInfo.push(walk);
 
                 const directionsService = new google.maps.DirectionsService();
-                const results = directionsService.route({
+                const results = await directionsService.route({
                     origin: { lat: walk.origin.lat, lng: walk.origin.lon },
                     destination: { lat: walk.destnation.lat, lng: walk.destnation.lon },
                     travelMode: google.maps.TravelMode.WALKING,   
                 });
 
+                // console.log(results);
+
                 walkResult.push(results);
             }
 
-            // //console.log(walkResult);
+            // console.log(walkResult);
             setTimeout(() => {
                 setWalkTripInfo(walkResult);
             }, 1);  
@@ -438,28 +451,88 @@ export default function AdvSearch(props){
         // }, 10000);   
     }
 
-    async function getBusInfo() {
-         //await getPlannedTrip();
+    async function getBusShapeInfo() {
+        let busInfo = [];
+        let busRouteInfo = [];
+
+        // console.log(busTrip);
+        for (let i = 0; i < busTrip.length; ++i) {
+            let bus = {};
+            let service = busTrip[i].services[0]
+            bus.origin = service.begin.stop_id;
+            bus.destination = service.end.stop_id;
+            bus.route = service.route.route_id;
+            bus.shape_id = service.trip.shape_id;
+
+
+            const URL = `https://developer.mtd.org/api/v2.2/json/getshapebetweenstops?key=ca74c75b34e64cc9bde55c9714918493&begin_stop_id=${service.begin.stop_id}&end_stop_id=${service.end.stop_id}&shape_id=${service.trip.shape_id}`;  
         
+            const response = await fetch(URL);
+            const data = await response.json();
+
+            console.log(data);
+            
+
+            busInfo.push(bus);
+        }
+
+        setTimeout(() => {
+            setBusTripInfo(busInfo);
+        }, 1); 
+
+
+
+        URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;  
+        
+    }
+
+    async function getBusInfo() {
+        // let busInfo = [];
+        // let busRouteInfo = [];
+
+        // for (let i = 0; i < busTrip.length; ++i) {
+        //     let bus = {};
+        //     let service = busTrip[i].services[0]
+
+        //     bus.origin = service.begin.stop_id;
+        //     bus.destination = service.end.stop_id;
+        //     bus.route = service.route.route_id;
+        //     bus.shape_id = service.trip.shape_id;
+
+        //     busInfo.push(bus);
+        // }
+
         // setTimeout(() => {
-            let busInfo = [];
-            for (let i = 0; i < busTrip.length; ++i) {
-                let bus = {};
-                let service = busTrip[i].services[0]
+        //     setBusTripInfo(busInfo);
+        // }, 1);  
+        
+        
+        let busInfo = [];
+        let busRouteInfo = [];
 
-                bus.origin = service.begin.stop_id;
-                bus.destination = service.end.stop_id;
-                bus.route = service.route.route_id;
+        // console.log(busTrip);
+        for (let i = 0; i < busTrip.length; ++i) {
+            let bus = {};
+            let service = busTrip[i].services[0]
+            bus.origin = service.begin.stop_id;
+            bus.destination = service.end.stop_id;
+            bus.route = service.route.route_id;
+            bus.shape_id = service.trip.shape_id;
 
-                busInfo.push(bus);
-            }
 
-            setTimeout(() => {
-                setBusTripInfo(busInfo);
-            }, 1);    
+            const URL = `https://developer.mtd.org/api/v2.2/json/getshapebetweenstops?key=ca74c75b34e64cc9bde55c9714918493&begin_stop_id=${service.begin.stop_id}&end_stop_id=${service.end.stop_id}&shape_id=${service.trip.shape_id}`;  
+        
+            const response = await fetch(URL);
+            const data = await response.json();
 
-            // //console.log(busTripInfo);
-        // }, 10000); 
+            busRouteInfo.push(data.shapes);
+
+            busInfo.push(bus);
+        }
+
+        setTimeout(() => {
+            setBusTripInfo(busRouteInfo);
+        }, 1); 
     }
 
     async function getVehicles() {
@@ -619,7 +692,7 @@ export default function AdvSearch(props){
                         <em>Event in next two days</em>
                     </MenuItem>
                     {upcomingEvents.map( (event, index) => (
-                        <MenuItem key = {index} value = {event.title}>
+                        <MenuItem key = {index} value = {event}>
                             {event.title}
                         </MenuItem>
                     ))}
@@ -667,6 +740,7 @@ export default function AdvSearch(props){
                         }}
                     onChange={(newValue) => {
                     setArrivalTime(newValue);
+                    // console.log( "arrival time = ", newValue );
                     }}
                     renderInput={(params) => (
                     <TextField
@@ -676,7 +750,32 @@ export default function AdvSearch(props){
                     )}
                 />
                 </LocalizationProvider> 
+                <Autocomplete
+                    onPlaceChanged={onPlaceChanged}
+                    onLoad={onLoad}
+                >
+                <Input
+                    type='text'
+                    name='destination'
+                    placeholder='Destination'
+                    sx={{
+                        width: '213.171px',
+                        height: '55.984px',
+                        borderRadius: '5px',
+                        backgroundColor: 'white',
+                        opacity: '0.9',
+                        color: 'black',
+                        verticalAlign: 'middle',
+                        marginTop: '10px',
+                        marginBottom: '10px'
+                    }}
+                    onChange={(event)=>{
 
+                        console.log(event.target.value);
+
+                    }}
+                    ></Input>
+                </Autocomplete>
                 {/* {destinations.map((destination, index) => (
                     <Box key={destination.id} sx={{ display: 'flex', alignItems: 'center' }}>
                     <Autocomplete>
