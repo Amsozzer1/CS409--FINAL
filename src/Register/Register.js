@@ -22,7 +22,7 @@ export default function Register(){
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       //NAVIGATE ONCE REGISTERED
-
+      navigate( '/navigation' );
       console.log('User registered:', userCredential.user);
     } catch (error) {
       console.error('Registration failed:', error.message);
