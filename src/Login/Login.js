@@ -82,13 +82,12 @@ export default function Login(){
   }
 
     return(
-
             <Box
             sx={{justifyContent:'center',width:'100%',height:'85vh',display:'flex',flexDirection:'column'}}
             >
                 
                 {/* <Button sx={{color:'black',marginLeft:'35%',marginTop:'13%',width:'20px'}}>Back</Button> */}
-                <Button sx={{color:'black',top:'-35px',marginLeft:'25%'}} onClick={registerPage}>Register</Button>
+                {/* <Button sx={{color:'black',top:'-35px',marginLeft:'25%'}} onClick={registerPage}>Register</Button> */}
                 
                 
             <h1 style={{textAlign:'center',fontWeight:'normal',fontSize:'48px',marginBottom:'37px'}}>Login</h1>
@@ -155,7 +154,7 @@ export default function Login(){
         >
           Sign in with Google
         </Button>
-        <Button
+        {/* <Button
           startIcon={<Facebook />}
           sx={{
             marginLeft:'15px',
@@ -169,14 +168,14 @@ export default function Login(){
           onClick={handleFacebookLogin}
         >
           Sign in with Facebook
-        </Button>
+        </Button> */}
 
             </Box>
             <Button
             
-            onClick={getInfo}
+            onClick={registerPage}
             >
-              INFO
+              Register
             </Button>
             <Button
             
