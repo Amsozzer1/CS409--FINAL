@@ -1,6 +1,6 @@
 import React from 'react';
-import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow } from '@react-google-maps/api';
-import { useState, useEffect } from 'react';
+import { GoogleMap, useLoadScript,Marker, MarkerF,InfoWindow } from '@react-google-maps/api';
+import { useState } from 'react';
 
 import {Stop} from '../Bus/stop';
 import Navbar from '../Navbar/Navbar';
@@ -15,15 +15,10 @@ const mapContainerStyle = {
   width: '100%',
   height: '100%',
 };
-function NavMarker({position}){
-    return (
-     <Marker position={position} />
-    );
-  
-  }
 const BusStop = () => {
   const [long, setLong] = React.useState(0);
   const [lat, setLat] = React.useState(0);
+  // eslint-disable-next-line no-unused-vars
   const [zoom, setZoom] = useState(16);
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [navigation, setNavigation] = React.useState(false);

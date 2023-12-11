@@ -1,23 +1,7 @@
 import React from 'react';
-import { GoogleMap, useLoadScript,Marker, MarkerF,DirectionsRenderer,InfoWindow, Polyline } from '@react-google-maps/api';
-import { useState, useEffect, useRef } from 'react';
-import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
-// <<<<<<< wangzhe_new
-// import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
-// =======
-// //<<<<<<< wangzhe-handleConflict
-// import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch';
-// // <<<<<<< heh
-// // //import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
-// // =======
-// // // import AdvSearch,{ROUTE} from '../AdvanceSearch/advsearch.js';
-// // >>>>>>> main
-// //>>>>>>> main
-// >>>>>>> main
-import Navbar from '../Navbar/Navbar';
-import { set } from 'date-fns';
+import { GoogleMap, MarkerF,DirectionsRenderer,InfoWindow, Polyline } from '@react-google-maps/api';
+import { useState, useEffect } from 'react';
 
-const libraries = ['places'];
 const mapContainerStyle = {
   width: '100%',
   height: '100%',
@@ -41,48 +25,13 @@ const Map = (props) => {
     lng: 0,
   });
   const walkRoute = data.walk;
-  const busRoute = data.bus;
-  const vehicle = data.vehicle;
-  
 
+  // console.log(data);
+  // console.log(walkRoute);
+  // console.log(busRoute);
+  // console.log(vehicle);
 
-  console.log(data);
-  console.log(walkRoute);
-  console.log(busRoute);
-  console.log(vehicle);
-
-  console.log(typeof busRoute);
-
-  
-
-  // var routeCoord = [];
-  // if (busRoute !== undefined) {
-  //   for (let i = 0; i < busRoute.length; ++i) {
-  //     // const routeCoords = [];
-  //     // const singleRoute = busRoute[i];
-  
-  //     // for (let j = 0; j < singleRoute.length; ++j) {
-  //     //   const singleCoord = {};
-  //     //   singleCoord['lat'] = singleRoute.
-  //     //   routeCoords = {...routeCoords, }
-  //     // }
-  
-  //     const singleRoute = busRoute[i];
-  //     const pathCoordinates = singleRoute.map(
-  //       point => (
-  //         {
-  //           lat: point.shape_pt_lat,
-  //           lng: point.shape_pt_lon
-  //         }
-  //       )
-  //     );
-  
-  //     routeCoord = routeCoord.concat(pathCoordinates);
-  //   }
-
-  //   console.log(routeCoord);
-  //   console.log(routeCoord[0]);
-  // }
+  // console.log(typeof busRoute);
 
   const updateRouteCoordinates = (routeCoord) => {
     
@@ -132,10 +81,12 @@ const Map = (props) => {
 
 
       
-  const [center, setCenter] = useState({ lat:  currentLocation.lat, lng: currentLocation.lng });
+  // const [center, setCenter] = useState({ lat:  currentLocation.lat, lng: currentLocation.lng });
 
+  // eslint-disable-next-line no-unused-vars
   const [zoom, setZoom] = useState(16);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [dest, setDest] = useState(null);
 
   const handleOnClick = (event) => {
@@ -155,11 +106,11 @@ const Map = (props) => {
     DESTINATION = selectedLocation
   }
  
- function handleChange() {
-  console.log("handle change");
-  setRouteCoord([]);
+//  function handleChange() {
+//   console.log("handle change");
+//   setRouteCoord([]);
 
-  };
+//   };
   React.componentDidMount=() =>{ 
   
     // Changing the state after 2 sec 

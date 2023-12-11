@@ -5,8 +5,7 @@ import Box from '@mui/material/Box';
 import { Input } from '@mui/material';
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {app} from './../Firebase/firebase.js';
-import { Navigate } from 'react-router-dom';
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
 

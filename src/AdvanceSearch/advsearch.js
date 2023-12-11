@@ -4,54 +4,20 @@ import Box from '@mui/material/Box';
 import { Button } from '@mui/material';
 import {Input} from '@mui/material';
 import {Search} from '@mui/icons-material';
-// <<<<<<< wangzhe
-import Results from './Results.js';
-import {useLoadScript,Autocomplete,DirectionsRenderer } from '@react-google-maps/api';
-// import { DESTINATION } from '../Map/Map.js';
-
-import { useState, useEffect, useRef } from 'react';
-
-// =======
-// import Results from '../AdvanceSearch/Results.js';
-// import {useLoadScript,Autocomplete } from '@react-google-maps/api';
+import {useLoadScript,Autocomplete} from '@react-google-maps/api';
+import { useState, useEffect } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import TextField from '@mui/material/TextField';
 import dayjs from 'dayjs';
-
-// import { useState } from 'react';
 import { Select, MenuItem } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-// >>>>>>> main
 import '../index.css';
-import { v4 as uuidv4 } from 'uuid';
-import Typography from '@mui/material/Typography';
 import '../index.css';
 import { useUser } from '../User/User.js';
 const libraries = ['places'];
 
 export var ROUTE = '';
-/* CHANGE DATA TO UPDATE RESULTS AND ALSO CHANGE AVATAR
-    FROM Results.js*/
-// const data = [
-    
-//     {
-//         id: 1,
-//         name: 'Hawaii',
-//         email: 'abc@gmail.com',
-//         sirName: 'Hawaii',
-
-//     }
-    
-//   ];
-/* CHANGE DATA TO UPDATE RESULTS (fecth from backend based on
-    the search query?)
-*/
-
-
 export var BUS = '';
 
 const TripDetails = ({ tripData }) => {
@@ -180,34 +146,25 @@ export default function AdvSearch(props){
         props.parentCallback(mes);
     };
 
-    const [map, setMap] = useState(null);
+    // eslint-disable-next-line no-unused-vars
     const [directions, setDirections] = useState(null);
     const [open, setOpen] = useState(false);
-    const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
-    const [directionResponse, setDirectionResponse] = useState(null);
-    const [distance, setDistance] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [long, setLong] = useState(-88.22884);
-    const [lat, setLat] = useState(40.11644);
     const [selectedValue, setSelectedValue] = useState('');
-    const [selectedTime, setSelectedTime] = React.useState(null);
-    const [destinations, setDestinations] = useState([{ id: uuidv4(), name: '' }]);
-
-    const [data, setData] = useState([]);
-   
     const [trips, setTrips] = useState([]);
-
     const [departureTime, setDepartureTime] = React.useState(null);
     const [arrivalTime, setArrivalTime] = React.useState(null);
 
 
+    // eslint-disable-next-line no-unused-vars
     const [coordinates, setCoordinates] = useState(null);
 
+    // eslint-disable-next-line no-unused-vars
     const [selectedPlace, setSelectedPlace] = useState(null);
     const [searchResult, setSearchResult] = useState(null);
     const [origin, setOrigin] = useState({lat: 40.12233, lon: -88.29619});
     const [destination, setDestination] = useState({lat: 40.11626, lon: -88.25783});
 
+    // eslint-disable-next-line no-unused-vars
     const [itinerary, setItinerary] = useState(null);
 
     const [walkTrip, setWalkTrip] = useState([]);
@@ -215,8 +172,6 @@ export default function AdvSearch(props){
 
     const [walkTripInfo, setWalkTripInfo] = useState([]);
     const [busTripInfo, setBusTripInfo] = useState([]);
-
-    const [routeShape, setRouteShape] = useState(null);
 
     const [currRoute, setCurrRoute] = useState("");
     const [vehicles, setVehicles] = useState([]);
@@ -254,6 +209,7 @@ export default function AdvSearch(props){
     useEffect(() => {
         // Fetch directions when origin/destination changes
         getDirections();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [origin, destination]);
 
     const getCoordinatesFromPlaceId = (placeId) => {
@@ -304,58 +260,6 @@ export default function AdvSearch(props){
         const newDayjsObject = dayjs(event.target.value.start);
         setArrivalTime( newDayjsObject );
     }
-
-
-
-    const addDestination = () => {
-        setDestinations([...destinations, { id: uuidv4(), name: '' }]);
-    };
-
-    const removeDestination = (id) => {
-        setDestinations(destinations.filter(dest => dest.id !== id));
-        };
-
-    const handleDestinationChange = (id, newValue) => {
-        const newDestinations = destinations.map(dest => {
-            if (dest.id === id) {
-            return { ...dest, name: newValue };
-            }
-            return dest;
-        });
-        setDestinations(newDestinations);
-        };
-
-
-
-    
-
-    // const [open, setOpen] = useState(false);
-    // const [center, setCenter] = useState({ lat: 40.110558, lng: -88.228333 });
-    // const [directionResponse, setDirectionResponse] = useState(null);
-    // const [distance, setDistance] = useState(0);
-    // const [duration, setDuration] = useState(0);
-    // const [long, setLong] = useState(-88.22884);
-    // const [lat, setLat] = useState(40.11644);
-    
-
-    // const [data, setData] = useState([]);
-   
-
-    // const [origin, setOrigin] = useState({lat: 40.12233, lon: -88.29619});
-    // const [destination, setDestination] = useState({lat: 40.11626, lon: -88.25783});
-
-    // const [itinerary, setItinerary] = useState(null);
-
-    // const [walkTrip, setWalkTrip] = useState([]);
-    // const [busTrip, setBusTrip] = useState([]);
-
-    // const [walkTripInfo, setWalkTripInfo] = useState([]);
-    // const [busTripInfo, setBusTripInfo] = useState([]);
-
-    // const [routeShape, setRouteShape] = useState(null);
-
-    // const [currRoute, setCurrRoute] = useState("");
-    // const [vehicles, setVehicles] = useState([]);
 
 
     async function getPlannedTrip() {
@@ -433,15 +337,11 @@ export default function AdvSearch(props){
     }
 
     async function getWalkInfo() {
-         // setTimeout(() => {
-            // let walkInfo = [];
             let walkResult = [];
             for (let i = 0; i < walkTrip.length; ++i) {
                 let walk = {};
                 walk.origin = walkTrip[i].walk.begin;
                 walk.destnation = walkTrip[i].walk.end;
-
-                // walkInfo.push(walk);
 
                 const directionsService = new google.maps.DirectionsService();
                 const results = await directionsService.route({
@@ -449,75 +349,14 @@ export default function AdvSearch(props){
                     destination: { lat: walk.destnation.lat, lng: walk.destnation.lon },
                     travelMode: google.maps.TravelMode.WALKING,   
                 });
-
-                // console.log(results);
-
                 walkResult.push(results);
             }
-
-            // console.log(walkResult);
             setTimeout(() => {
                 setWalkTripInfo(walkResult);
             }, 1);  
-            // //console.log(walkTripInfo);
-        // }, 10000);   
-    }
-
-    async function getBusShapeInfo() {
-        let busInfo = [];
-        let busRouteInfo = [];
-
-        // console.log(busTrip);
-        for (let i = 0; i < busTrip.length; ++i) {
-            let bus = {};
-            let service = busTrip[i].services[0]
-            bus.origin = service.begin.stop_id;
-            bus.destination = service.end.stop_id;
-            bus.route = service.route.route_id;
-            bus.shape_id = service.trip.shape_id;
-
-
-            const URL = `https://developer.mtd.org/api/v2.2/json/getshapebetweenstops?key=ca74c75b34e64cc9bde55c9714918493&begin_stop_id=${service.begin.stop_id}&end_stop_id=${service.end.stop_id}&shape_id=${service.trip.shape_id}`;  
-        
-            const response = await fetch(URL);
-            const data = await response.json();
-
-            console.log(data);
-            
-
-            busInfo.push(bus);
-        }
-
-        setTimeout(() => {
-            setBusTripInfo(busInfo);
-        }, 1); 
-
-
-
-        URL = `https://developer.mtd.org/api/v2.2/json/getplannedtripsbylatlon?key=ca74c75b34e64cc9bde55c9714918493&origin_lat=${origin.lat}&origin_lon=${origin.lon}&destination_lat=${destination.lat}&destination_lon=${destination.lon}`;  
-        
     }
 
     async function getBusInfo() {
-        // let busInfo = [];
-        // let busRouteInfo = [];
-
-        // for (let i = 0; i < busTrip.length; ++i) {
-        //     let bus = {};
-        //     let service = busTrip[i].services[0]
-
-        //     bus.origin = service.begin.stop_id;
-        //     bus.destination = service.end.stop_id;
-        //     bus.route = service.route.route_id;
-        //     bus.shape_id = service.trip.shape_id;
-
-        //     busInfo.push(bus);
-        // }
-
-        // setTimeout(() => {
-        //     setBusTripInfo(busInfo);
-        // }, 1);  
-        
         
         let busInfo = [];
         let busRouteInfo = [];
@@ -789,45 +628,6 @@ export default function AdvSearch(props){
                     }}
                     ></Input>
                 </Autocomplete>
-                {/* {destinations.map((destination, index) => (
-                    <Box key={destination.id} sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Autocomplete>
-                        <TextField
-                        key={destination.id}
-                        value={destination.name}
-                        onChange={(e) => handleDestinationChange(destination.id, e.target.value)}
-                        label={`Add stop ${index + 1}`}
-                        variant="outlined"
-                        sx={{
-                            width: '213.171px',
-                            height: '55.984px',
-                            borderRadius: '5px',
-                            backgroundColor: 'white',
-                            opacity: '0.9',
-                            color: 'black',
-                            verticalAlign: 'middle',
-                            marginTop: '10px',  
-                            }}
-                        />
-                    </Autocomplete>
-                    <IconButton onClick={() => removeDestination(destination.id)} color="error" aria-label="remove stop">
-                        <RemoveCircleOutlineIcon />
-                    </IconButton>
-                    </Box>
-                ))}
-                <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'flex', // 右对齐
-                    gap: '8px', // 组件之间的间隙
-                    }}>
-                <IconButton onClick={addDestination} color="primary" aria-label="add stop">
-                    <AddCircleOutlineIcon />
-                </IconButton>
-                <Typography variant="body1">
-                    add stop
-                </Typography>
-                </Box> */}
                 </Box>
 
             </Box>
@@ -926,19 +726,6 @@ export default function AdvSearch(props){
                 )
             }
             
-            {/* <Results data={data}></Results> */}
-            
-            
         </Box>
-        // </div>
     );
 };
-// <<<<<<< heh
-// // <<<<<<< Jenny_adv_event
-// };
-// // =======
-
-// // >>>>>>> main
-// =======
-// };
-// >>>>>>> main

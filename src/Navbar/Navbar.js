@@ -3,7 +3,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import PlaceIcon from '@mui/icons-material/Place';
@@ -20,7 +19,6 @@ import { useNavigate,useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useUser } from '../User/User.js';
 import { backendURL } from '../Backend/Backend.js';
-import zIndex from '@mui/material/styles/zIndex.js';
 const auth = getAuth(app);
 // const user = auth.currentUser;
 export default function Navbar(){
@@ -34,11 +32,7 @@ export default function Navbar(){
     const toggleMenu = () => {
       setMenuOpen( !menuOpen );
     }
-    const createHandleMenuClick = (menuItem) => {
-        return () => {
-          console.log(`Clicked on ${menuItem}`);
-        };
-      };
+    
       useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currUser) => {
             if (currUser) {

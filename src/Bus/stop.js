@@ -39,6 +39,7 @@ export function Stop({ DATA }) {
     }
 
     getStopData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [DATA.lat, DATA.long]);
   // Function to calculate closest stop based on coordinates
   const calculateClosestStop = (stops, lat, lon) => {

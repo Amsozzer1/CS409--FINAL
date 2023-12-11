@@ -4,14 +4,12 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Input, Typography } from '@mui/material';
 import Checkbox from '@mui/material/Checkbox';
-import { Google,Facebook} from '@mui/icons-material';
+import { Google } from '@mui/icons-material';
 import {app} from './../Firebase/firebase.js';
 import { getAuth} from "firebase/auth";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import {GoogleAuthProvider,signInWithRedirect} from "firebase/auth";
-import { FacebookAuthProvider } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
-const provider2 = new FacebookAuthProvider();
 const provider = new GoogleAuthProvider();
 
 export const auth = getAuth(app);
@@ -29,23 +27,6 @@ export default function Login(){
         // An error happened.
       });
     }
-    function getInfo(){
-    
-      const user = auth.currentUser;
-      if (user !== null) {
-        user.providerData.forEach((profile) => {
-          console.log("Sign-in provider: " + profile.providerId);
-          console.log("  Provider-specific UID: " + profile.uid);
-          console.log("  Name: " + profile.displayName);
-          console.log("  Email: " + profile.email);
-          console.log("  Photo URL: " + profile.photoURL);
-        });
-      }
-      else{
-        console.log("No User Signed In");
-      }
-    
-    }
     
     function HomePage(){
       console.log( "navigate to home page");
@@ -62,19 +43,12 @@ export default function Login(){
             // ...
           })
           .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
           });
       };
      function handleGoogleLogin(){
       signInWithRedirect(auth, provider);
       HomePage();
       //navigate('/navbar');
-  }
-
-  function handleFacebookLogin(){
-    signInWithRedirect(auth, provider2);
-    HomePage();
   }
 
   function registerPage(){
