@@ -107,7 +107,7 @@ const BusStop = () => {
             </InfoWindow>
           )}
           {/* <MarkerF position={center} /> */}
-          {navigation ?
+          {navigation && selectedLocation ?
                 <>
                 <Marker position={selectedLocation}
                 icon={{

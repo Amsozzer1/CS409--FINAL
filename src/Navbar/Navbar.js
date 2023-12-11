@@ -157,11 +157,11 @@ export default function Navbar(){
                 > 
                     <SearchIcon sx={{fontSize:"inherit"}}/> 
                 </IconButton>
-                {/* <IconButton aria-label="bus stop" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
+                <IconButton aria-label="bus stop" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
                 onClick = {() => {if(location.pathname !== '/busStop') navigate('/busStop')}}
                 > 
                     <PlaceIcon sx={{fontSize:"inherit"}}/> 
-                </IconButton> */}
+                </IconButton>
                 <IconButton aria-label="calendar" size="medium" sx={{ color:"#E84A27", fontSize:"35px", mr:"10px" }}
                 onClick = {() => {if(location.pathname !== '/calendar') navigate('/calendar')}}
                 > 
