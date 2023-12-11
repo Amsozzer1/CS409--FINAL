@@ -55,9 +55,7 @@ function App() {
    
     
 
-  ], {
-    basename: "/final_project"
-  });
+  ]);
 
 
 
